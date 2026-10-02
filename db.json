@@ -11,6 +11,18 @@
       "createdAt": "2026-08-27T14:51:43.866Z",
       "updatedAt": "2026-08-27T14:51:43.867Z",
       "ip": "212.250.188.205, 169.254.169.126"
+    },
+    "test-device-1": {
+      "deviceId": "test-device-1",
+      "createdAt": "2026-10-02T18:48:49.624Z",
+      "updatedAt": "2026-10-02T18:48:49.625Z",
+      "ip": "127.0.0.1"
+    },
+    "test-device-2": {
+      "deviceId": "test-device-2",
+      "createdAt": "2026-10-02T18:49:17.753Z",
+      "updatedAt": "2026-10-02T18:49:17.754Z",
+      "ip": "127.0.0.1"
     }
   },
   "conversations": {
@@ -62,6 +74,42 @@
         "parts": [
           {
             "text": "Hello there! It is wonderful to meet you. I'm Ogoo, your personal healthcare assistant and companion. \n\nBefore we dive in, is this your first time speaking with me, or have we met before? \n\n(I’ve noticed your device connection and IP in the background, which will help keep your health profile nicely synchronized!)"
+          }
+        ]
+      }
+    ],
+    "test-device-1": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "hello Ogoo"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "Hello! How are you doing today? \n\nI am Ogoo, your AI healthcare assistant. How can I help you right now? Whether you want to check your vitals, discuss any symptoms you are feeling, or ask a health question, I am here to support you."
+          }
+        ]
+      }
+    ],
+    "test-device-2": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "Hello, my blood pressure is 120/80 and heart rate is 72"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "💓 Clinical Vitals Logged Successfully:\n• **Blood Pressure**: 120/80 mmHg (Normal (Optimal Range))\n• **Heart Rate**: 72 bpm\n• **Temperature**: 98.6°F\n• **Glucose**: 100 mg/dL\n\nI have recorded this into your permanent Vitals History ledger."
           }
         ]
       }

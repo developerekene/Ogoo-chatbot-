@@ -164,6 +164,16 @@ const getPrnStatus = (lastDoseTime: number | null | undefined, minIntervalHours:
   };
 };
 
+export interface PlanTask {
+  id: string;
+  title?: string;
+  category: string;
+  time: string;
+  timeSlot?: 'Morning' | 'Afternoon' | 'Evening' | 'Night';
+  checked: boolean;
+  day?: string;
+}
+
 const getTimeSlotFromTime = (timeStr: string): 'Morning' | 'Afternoon' | 'Evening' | 'Night' => {
   const mins = parseTimeToMinutes(timeStr);
   if (mins >= 300 && mins < 720) return 'Morning';
@@ -509,7 +519,7 @@ export default function App() {
   const [rPPGProgress, setRPPGProgress] = useState(0);
 
   // --- Multimodal OCR & Documents ---
-  const [scanCategory, setScanCategory] = useState<'prescription' | 'lab' | 'skin' | 'meal'>('prescription');
+  const [scanCategory, setScanCategory] = useState<'prescription' | 'lab' | 'skin' | 'meal' | 'gait' | 'tremor'>('prescription');
   const [scanResult, setScanResult] = useState('');
   const [scanLoading, setScanLoading] = useState(false);
 
@@ -919,16 +929,15 @@ export default function App() {
       if (toolActions.length > 0) {
         for (const action of toolActions) {
           if (action.name === 'logVitalsReading' && action.args) {
-            const { heartRate, bloodPressureSys, bloodPressureDia, spo2, bloodGlucose, temperature, notes } = action.args;
+            const { heartRate, bloodPressureSys, bloodPressureDia, spo2, temperature, notes } = action.args;
             const newVital = {
               id: Date.now().toString(),
-              heartRate: heartRate || 72,
-              bloodPressureSys: bloodPressureSys || 120,
-              bloodPressureDia: bloodPressureDia || 80,
+              hr: heartRate || 72,
+              bpSys: bloodPressureSys || 120,
+              bpDia: bloodPressureDia || 80,
               spo2: spo2 || 98,
-              bloodGlucose: bloodGlucose || 100,
-              temperature: temperature || 98.6,
-              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              temp: temperature || 98.6,
+              date: Date.now(),
               notes: notes || 'Logged by Ogoo Healthcare Agent'
             };
             setVitalsHistory(prev => [...prev, newVital]);
@@ -940,7 +949,7 @@ export default function App() {
               time: time || '08:00 AM',
               category: category || '💊 Medicine',
               timeSlot: (timeSlot as any) || getTimeSlotFromTime(time || '08:00 AM'),
-              completed: false
+              checked: false
             };
             setPlanTasks(prev => [...prev, newTask]);
 
@@ -965,9 +974,8 @@ export default function App() {
             if (action.args.type === 'hydration' && action.args.amountMl) {
               const newLog = {
                 id: Date.now().toString(),
-                type: 'Water',
                 amount: action.args.amountMl,
-                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                time: Date.now()
               };
               setLiquidLogs(prev => [newLog, ...prev]);
             } else if (action.args.type === 'nutrition' && action.args.calories) {
@@ -1655,7 +1663,7 @@ Emergency Dispatch: ${emergencyInfo.countryCode || '911'}`;
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPress={() => setActiveModal('firstResponderID')}
+                  onPress={() => setActiveModal('firstResponder')}
                   style={{
                     flex: 1,
                     backgroundColor: '#2d0a4e',
@@ -2246,7 +2254,7 @@ Emergency Dispatch: ${emergencyInfo.countryCode || '911'}`;
                     if (p >= 100) {
                       clearInterval(interval);
                       setRPPGScanning(false);
-                      setEntry({ hr: '74', bpSys: '120', bpDia: '78', spo2: '98', temp: '98.6' });
+                      setEntry({ hr: '74', bpSys: '120', bpDia: '78', spo2: '98', temp: '98.6', notes: 'Camera rPPG Optical Scan' });
                       alert("Camera rPPG Optical Scan Complete! Pulse: 74 bpm, SpO2: 98%, Respiration: 16 rpm auto-filled.");
                     }
                   }, 600);
@@ -2515,7 +2523,7 @@ Emergency Dispatch: ${emergencyInfo.countryCode || '911'}`;
                     }}
                     style={{
                       flexDirection: 'row',
-                      justify: 'space-between',
+                      justifyContent: 'space-between',
                       alignItems: 'center',
                       backgroundColor: 'rgba(255,255,255,0.04)',
                       padding: 10,
@@ -4909,7 +4917,7 @@ Please format concisely with three focused recommendations:
               <View style={{ backgroundColor: 'rgba(229,114,163,0.15)', padding: 12, borderRadius: 12, borderWidth: 1, borderColor: COLORS.accent, marginBottom: 12 }}>
                 <Text style={{ color: COLORS.accent, fontWeight: 'bold', fontSize: 12 }}>📊 Longitudinal Health Trends & Insights</Text>
                 <Text style={{ color: '#FFF', fontSize: 11, marginTop: 2, lineHeight: 16 }}>
-                  Historical correlation analysis reveals that days maintaining over 2,200ml hydration combined with >7.5 hrs sleep show 65% fewer fatigue flares over the last 30 days.
+                  Historical correlation analysis reveals that days maintaining over 2,200ml hydration combined with over 7.5 hrs sleep show 65% fewer fatigue flares over the last 30 days.
                 </Text>
               </View>
             </ScrollView>
@@ -5848,9 +5856,9 @@ Please format concisely with three focused recommendations:
     return (
       <View style={styles.container}>
         <SupportNetworkPage
-          onBack={() => setCurrentScreen('chat')}
+          onBack={() => setCurrentScreen('home')}
           onAskOgoo={(prompt: string) => {
-            setCurrentScreen('chat');
+            setCurrentScreen('home');
             setInputText(prompt);
           }}
         />

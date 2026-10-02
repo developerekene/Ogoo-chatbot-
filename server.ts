@@ -652,7 +652,7 @@ Remember to always prioritize patient safety and deliver structured, actionable 
           contents: sanitizedContents,
           config: {
             systemInstruction,
-            tools: toolsConfig
+            tools: toolsConfig as any
           }
         });
       } catch (genErr: any) {
@@ -662,7 +662,7 @@ Remember to always prioritize patient safety and deliver structured, actionable 
             contents: sanitizedContents,
             config: {
               systemInstruction,
-              tools: toolsConfig
+              tools: toolsConfig as any
             }
           });
         } else {
@@ -677,7 +677,7 @@ Remember to always prioritize patient safety and deliver structured, actionable 
 
       if (functionCalls && functionCalls.length > 0) {
         for (const call of functionCalls) {
-          toolActions.push({ name: call.name, args: call.args });
+          toolActions.push({ name: call.name || '', args: call.args });
 
           if (call.name === 'saveUserInfo') {
             savedInfo = call.args as Partial<UserProfile>;
@@ -732,6 +732,7 @@ Remember to always prioritize patient safety and deliver structured, actionable 
       try {
         const renderRes = await fetch(`${RENDER_BACKEND_URL}/api/ai/generate`, {
           method: "POST",
+          signal: AbortSignal.timeout(3500),
           headers: {
             "Content-Type": "application/json",
             "Accept": "application/json",
@@ -887,13 +888,36 @@ Provide clear, structured bullet points with clinical interpretation and actiona
   }
 });
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'dist')));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-  });
+const distDir = path.join(__dirname, 'dist');
+const distIndex = path.join(distDir, 'index.html');
+
+if (!fs.existsSync(distIndex) && !process.env.EXPO_USE_METRO) {
+  try {
+    console.log('Dist bundle not found. Building web bundle via expo export...');
+    const { execSync } = require('child_process');
+    execSync('npx expo export -p web', { stdio: 'inherit' });
+  } catch (buildErr: any) {
+    console.warn('Failed to auto-build dist bundle:', buildErr?.message);
+  }
+}
+
+if (process.env.NODE_ENV === 'production' || !process.env.EXPO_USE_METRO || fs.existsSync(distIndex)) {
+  // Serve built static bundle
+  if (fs.existsSync(distIndex)) {
+    app.use(express.static(distDir));
+    app.use((req, res) => {
+      res.sendFile(distIndex);
+    });
+  } else {
+    // Fallback proxy to Expo dev server if running on 3001
+    app.use('/', createProxyMiddleware({
+      target: 'http://localhost:3001',
+      changeOrigin: true,
+      ws: true
+    }));
+  }
 } else {
-  // Proxy everything else to Expo dev server (running on 3001)
+  // In explicit metro dev mode, proxy to Expo dev server with dist fallback
   app.use('/', createProxyMiddleware({
     target: 'http://localhost:3001',
     changeOrigin: true,
@@ -902,6 +926,6 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Express API server listening on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Express API server listening on 0.0.0.0:${PORT}`);
 });

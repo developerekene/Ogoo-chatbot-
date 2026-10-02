@@ -4,12 +4,12 @@
     "strict": true,
     "jsx": "react-native",
     "lib": ["ES6", "DOM"],
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "types": ["react", "react-native"]
   },
-  "include": ["app", "App.tsx", "index.ts", "index.tsx"]
+  "include": ["app", "src/**/*", "App.tsx", "index.ts", "index.tsx", "server.ts"]
 }

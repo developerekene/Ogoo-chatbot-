@@ -791,7 +791,7 @@ export const SupportMessagingView: React.FC<SupportMessagingViewProps> = ({
           <TouchableOpacity
             onPress={() => setShowShareVitalsModal(true)}
             style={styles.shareVitalsBtn}
-            title="Share Vitals"
+            accessibilityLabel="Share Vitals"
           >
             <Activity color="#d8b4fe" size={14} style={{ marginRight: 4 }} />
             <Text style={styles.shareVitalsBtnText}>Share Vitals</Text>
@@ -928,7 +928,7 @@ export const SupportMessagingView: React.FC<SupportMessagingViewProps> = ({
         <TouchableOpacity
           onPress={() => setShowShareVitalsModal(true)}
           style={styles.chatAttachBtn}
-          title="Attach vitals"
+          accessibilityLabel="Attach vitals"
         >
           <Activity color={COLORS.accent} size={18} />
         </TouchableOpacity>
@@ -956,7 +956,7 @@ export const SupportMessagingView: React.FC<SupportMessagingViewProps> = ({
         <TouchableOpacity
           onPress={handleQuickTestReply}
           style={styles.instantTestBtn}
-          title="Instant Simulation Test"
+          accessibilityLabel="Instant Simulation Test"
         >
           <Zap color="#fbbf24" size={14} />
         </TouchableOpacity>
