@@ -475,6 +475,8 @@ export interface ChatMessage {
   id: string;
   text: string;
   fromUser: boolean;
+  timestamp?: number;
+  createdAt?: string;
   isImportant?: boolean;
   imageUri?: string;
   attachment?: ChatAttachment;
@@ -490,9 +492,30 @@ export default function App() {
     id: '1', 
     text: "Hello! I'm Ogoo, your personal health companion. I'm here to help you track vitals, manage your daily wellness routine, and answer your health questions. How can I help you today?", 
     fromUser: false, 
-    isImportant: true
+    isImportant: true,
+    timestamp: Date.now(),
+    createdAt: new Date().toISOString()
   };
-  const [messages, setMessages] = useState<ChatMessage[]>([introMessage]);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    if (Platform.OS === 'web' && typeof window !== 'undefined' && window.localStorage) {
+      try {
+        const saved = window.localStorage.getItem('ogoo_chat_history_v2');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (_) {}
+    }
+    return [introMessage];
+  });
+
+  useEffect(() => {
+    if (Platform.OS === 'web' && typeof window !== 'undefined' && window.localStorage) {
+      try {
+        window.localStorage.setItem('ogoo_chat_history_v2', JSON.stringify(messages));
+      } catch (_) {}
+    }
+  }, [messages]);
   const [expandedSources, setExpandedSources] = useState<Record<string, boolean>>({});
   const [selectedAttachment, setSelectedAttachment] = useState<ChatAttachment | null>(null);
   // Backwards compatible getter/setter for selectedImage
@@ -1062,12 +1085,15 @@ export default function App() {
       currentAttachment = selectedAttachment;
     }
 
-    const userIsImp = isMessageImportant({ id: Date.now().toString(), text: userText, fromUser: true });
+    const nowTime = Date.now();
+    const userIsImp = isMessageImportant({ id: nowTime.toString(), text: userText, fromUser: true });
     const userMsg: ChatMessage = { 
-      id: Date.now().toString(), 
+      id: nowTime.toString(), 
       text: userText, 
       fromUser: true, 
       isImportant: userIsImp,
+      timestamp: nowTime,
+      createdAt: new Date(nowTime).toISOString(),
       imageUri: currentAttachment?.type === 'image' ? currentAttachment.uri : undefined,
       attachment: currentAttachment || undefined
     };
@@ -1210,12 +1236,15 @@ export default function App() {
         triggerEmergency(clinicalAlert.message);
       }
 
-      const replyIsImp = isMessageImportant({ id: (Date.now() + 1).toString(), text: reply, fromUser: false });
+      const replyTime = Date.now();
+      const replyIsImp = isMessageImportant({ id: (replyTime + 1).toString(), text: reply, fromUser: false });
       const ogooMsg: ChatMessage = { 
-        id: (Date.now() + 1).toString(), 
+        id: (replyTime + 1).toString(), 
         text: reply, 
         fromUser: false, 
         isImportant: replyIsImp,
+        timestamp: replyTime,
+        createdAt: new Date(replyTime).toISOString(),
         toolActions,
         clinicalAlert,
         suggestedQuickPrompts,
@@ -1225,11 +1254,14 @@ export default function App() {
       setMessages((prev) => [...prev, ogooMsg]);
       speakText(reply);
     } catch (error) {
+      const errTime = Date.now();
       setMessages((prev) => [...prev, {
-        id: 'error',
+        id: errTime.toString(),
         text: "I'm having trouble connecting to my brain. Check your internet connection or API settings.",
         fromUser: false,
-        isImportant: true
+        isImportant: true,
+        timestamp: errTime,
+        createdAt: new Date(errTime).toISOString()
       }]);
     } finally {
       setIsLoading(false);
@@ -1274,9 +1306,14 @@ export default function App() {
           </View>
         </View>
       </View>
-      <TouchableOpacity onPress={() => setShowMenu(true)} style={styles.menuCircle}>
-        <Menu color={COLORS.textMain} size={20} />
-      </TouchableOpacity>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <TouchableOpacity onPress={() => setActiveModal('myplan')} style={[styles.menuCircle, { marginRight: 8 }]} accessibilityLabel="Open Calendar and Daily Memory">
+          <Calendar color={COLORS.accent} size={19} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setShowMenu(true)} style={styles.menuCircle}>
+          <Menu color={COLORS.textMain} size={20} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
@@ -3046,8 +3083,30 @@ Please format concisely with three focused recommendations:
       }
     };
 
-    const [activePlanTab, setActivePlanTab] = useState<'schedule' | 'timing' | 'prn'>('schedule');
+    const [activePlanTab, setActivePlanTab] = useState<'schedule' | 'chat_memory' | 'timing' | 'prn'>('schedule');
     const [timingSubTab, setTimingSubTab] = useState<'interval' | 'specific_times' | 'weekly' | 'active_list'>('interval');
+    const [chatMemorySearch, setChatMemorySearch] = useState<string>('');
+
+    const getDayNameFromTimestamp = (ts?: number) => {
+      if (!ts) return 'Wed';
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
+      const d = new Date(ts);
+      return days[d.getDay()] as ('Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun');
+    };
+
+    const getFormattedDateString = (ts?: number) => {
+      if (!ts) return '';
+      const d = new Date(ts);
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+
+    const filteredDayMessages = messages.filter(m => {
+      const msgDay = getDayNameFromTimestamp(m.timestamp);
+      const matchesDay = msgDay === selectedPlanDay;
+      if (!matchesDay) return false;
+      if (!chatMemorySearch.trim()) return true;
+      return m.text.toLowerCase().includes(chatMemorySearch.toLowerCase());
+    });
 
     // --- Interval Builder State ---
     const [intervalHours, setIntervalHours] = useState<number>(6);
@@ -3245,8 +3304,9 @@ Please format concisely with three focused recommendations:
             <View style={{ flexDirection: 'row', backgroundColor: '#200438', borderBottomWidth: 1, borderBottomColor: '#5c1794' }}>
               {[
                 { key: 'schedule', label: '📋 Daily Plan' },
-                { key: 'timing', label: '⏱️ Timing & Dosing' },
-                { key: 'prn', label: '🔒 PRN Safety Locks' }
+                { key: 'chat_memory', label: `💬 Chat Memory (${filteredDayMessages.length})` },
+                { key: 'timing', label: '⏱️ Timing' },
+                { key: 'prn', label: '🔒 PRN Safety' }
               ].map(tab => (
                 <TouchableOpacity
                   key={tab.key}
@@ -3260,7 +3320,7 @@ Please format concisely with three focused recommendations:
                     backgroundColor: activePlanTab === tab.key ? 'rgba(92, 23, 148, 0.4)' : 'transparent'
                   }}
                 >
-                  <Text style={{ color: activePlanTab === tab.key ? '#FFF' : COLORS.textSub, fontSize: 12, fontWeight: '700' }}>
+                  <Text style={{ color: activePlanTab === tab.key ? '#FFF' : COLORS.textSub, fontSize: 11.5, fontWeight: '700' }}>
                     {tab.label}
                   </Text>
                 </TouchableOpacity>
@@ -3472,7 +3532,145 @@ Please format concisely with three focused recommendations:
                 </View>
               )}
 
-              {/* TAB 2: TIMING & DOSING PROTOCOLS */}
+              {/* TAB 2: OGOO DAILY CHAT MEMORY */}
+              {activePlanTab === 'chat_memory' && (
+                <View>
+                  {/* Day Navigation Bar */}
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 }}>
+                    {(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const).map(day => {
+                      const countForDay = messages.filter(m => getDayNameFromTimestamp(m.timestamp) === day).length;
+                      return (
+                        <TouchableOpacity
+                          key={day}
+                          onPress={() => setSelectedPlanDay(day)}
+                          style={{
+                            paddingVertical: 6,
+                            paddingHorizontal: 8,
+                            borderRadius: 10,
+                            backgroundColor: selectedPlanDay === day ? '#5c1794' : 'rgba(255,255,255,0.05)',
+                            borderWidth: 1,
+                            borderColor: selectedPlanDay === day ? COLORS.accent : 'transparent',
+                            alignItems: 'center',
+                            minWidth: 42
+                          }}
+                        >
+                          <Text style={{ color: selectedPlanDay === day ? '#FFF' : COLORS.textSub, fontSize: 11, fontWeight: '700' }}>{day}</Text>
+                          <Text style={{ color: countForDay > 0 ? COLORS.accent : 'rgba(255,255,255,0.3)', fontSize: 9, fontWeight: '800', marginTop: 2 }}>
+                            {countForDay > 0 ? `💬 ${countForDay}` : '—'}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+
+                  {/* Search Bar for Chat Memory */}
+                  <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 12, paddingHorizontal: 10, marginBottom: 14, borderWidth: 1, borderColor: '#5c1794' }}>
+                    <BookOpen color={COLORS.accent} size={16} style={{ marginRight: 6 }} />
+                    <TextInput
+                      style={{ flex: 1, height: 38, color: '#FFF', fontSize: 13 }}
+                      placeholder={`Search ${selectedPlanDay}'s chat memory...`}
+                      placeholderTextColor="#8e7b9e"
+                      value={chatMemorySearch}
+                      onChangeText={setChatMemorySearch}
+                    />
+                    {chatMemorySearch ? (
+                      <TouchableOpacity onPress={() => setChatMemorySearch('')}>
+                        <X color="#FFF" size={14} />
+                      </TouchableOpacity>
+                    ) : null}
+                  </View>
+
+                  {/* Day Summary & Message Feed */}
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                    <Text style={[styles.cardHeader, { fontSize: 14 }]}>
+                      {selectedPlanDay}'s Consultation Memory ({filteredDayMessages.length})
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setActiveModal(null);
+                        setForceDashboard(false);
+                      }}
+                      style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#5c1794', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 }}
+                    >
+                      <MessageCircle color="#FFF" size={13} style={{ marginRight: 4 }} />
+                      <Text style={{ color: '#FFF', fontSize: 11, fontWeight: '700' }}>Open Live Chat</Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  {filteredDayMessages.length === 0 ? (
+                    <View style={{ alignItems: 'center', padding: 24, backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: 14, marginVertical: 8, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' }}>
+                      <MessageCircle color={COLORS.accent} size={36} style={{ marginBottom: 8, opacity: 0.8 }} />
+                      <Text style={{ color: '#FFF', fontSize: 14, fontWeight: '700', marginBottom: 4 }}>No Chat Memory for {selectedPlanDay}</Text>
+                      <Text style={{ color: COLORS.textSub, fontSize: 12, textAlign: 'center', marginBottom: 14 }}>
+                        You didn't record any health discussions with Ogoo on {selectedPlanDay}.
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setActiveModal(null);
+                          setForceDashboard(false);
+                        }}
+                        style={{ backgroundColor: '#5c1794', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 10, borderWidth: 1, borderColor: COLORS.accent }}
+                      >
+                        <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 12 }}>💬 Chat with Ogoo Now</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    filteredDayMessages.map((msg, mIdx) => (
+                      <View
+                        key={msg.id || mIdx}
+                        style={{
+                          backgroundColor: msg.fromUser ? 'rgba(229, 114, 163, 0.12)' : 'rgba(92, 23, 148, 0.35)',
+                          borderRadius: 14,
+                          padding: 12,
+                          marginBottom: 10,
+                          borderWidth: 1,
+                          borderColor: msg.fromUser ? 'rgba(229, 114, 163, 0.3)' : 'rgba(216, 180, 254, 0.25)'
+                        }}
+                      >
+                        {/* Header with Sender and Time */}
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: msg.fromUser ? COLORS.accent : '#5c1794', justifyContent: 'center', alignItems: 'center', marginRight: 6 }}>
+                              {msg.fromUser ? <User color="#FFF" size={12} /> : <Sparkles color="#FFF" size={12} />}
+                            </View>
+                            <Text style={{ color: msg.fromUser ? COLORS.accent : '#d8b4fe', fontWeight: 'bold', fontSize: 12 }}>
+                              {msg.fromUser ? 'You' : 'Ogoo'}
+                            </Text>
+                          </View>
+                          <Text style={{ color: COLORS.textSub, fontSize: 10 }}>
+                            {getFormattedDateString(msg.timestamp)}
+                          </Text>
+                        </View>
+
+                        {/* Formatted Text */}
+                        <View style={{ marginVertical: 2 }}>
+                          {renderFormattedText(msg.text)}
+                        </View>
+
+                        {/* Attachments if any */}
+                        {msg.attachment && (
+                          <View style={{ marginTop: 6, backgroundColor: 'rgba(0,0,0,0.2)', padding: 6, borderRadius: 8, flexDirection: 'row', alignItems: 'center' }}>
+                            <Paperclip color={COLORS.accent} size={14} style={{ marginRight: 6 }} />
+                            <Text style={{ color: '#FFF', fontSize: 11 }} numberOfLines={1}>{msg.attachment.name}</Text>
+                          </View>
+                        )}
+
+                        {/* Sources Count if any */}
+                        {msg.groundingSources && msg.groundingSources.length > 0 && (
+                          <View style={{ marginTop: 6, flexDirection: 'row', alignItems: 'center' }}>
+                            <Globe color="#38bdf8" size={12} style={{ marginRight: 4 }} />
+                            <Text style={{ color: '#38bdf8', fontSize: 10, fontWeight: '700' }}>
+                              Sources ({msg.groundingSources.length})
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+                    ))
+                  )}
+                </View>
+              )}
+
+              {/* TAB 3: TIMING & DOSING PROTOCOLS */}
               {activePlanTab === 'timing' && (
                 <View>
                   {/* Protocol Selector Chips */}
@@ -6222,24 +6420,19 @@ Please format concisely with three focused recommendations:
               >
                 <Globe color={expandedSources[item.id] ? '#38bdf8' : COLORS.textSub} size={14} style={{ marginRight: 5 }} />
                 <Text style={{ color: expandedSources[item.id] ? '#38bdf8' : COLORS.textSub, fontSize: 11, fontWeight: '700' }}>
-                  {expandedSources[item.id] ? 'Hide Sources' : 'Sources'}
+                  {expandedSources[item.id] ? `Hide Sources (${item.groundingSources.length})` : `Sources (${item.groundingSources.length})`}
                 </Text>
               </TouchableOpacity>
             )}
 
-            {/* Verified Medical Web Sources & Citations Grounding Panel */}
+            {/* Verified Medical Web Sources Grounding Panel */}
             {!item.fromUser && item.groundingSources && item.groundingSources.length > 0 && expandedSources[item.id] && (
               <View style={{ marginTop: 12, paddingTop: 10, borderTopWidth: 1, borderTopColor: 'rgba(216, 180, 254, 0.25)' }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, justifyContent: 'space-between' }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Globe color="#38bdf8" size={15} style={{ marginRight: 6 }} />
-                    <Text style={{ color: '#38bdf8', fontSize: 12, fontWeight: '700', letterSpacing: 0.3 }}>
-                      Verified Medical Evidence ({item.groundingSources.length})
-                    </Text>
-                  </View>
-                  <View style={{ backgroundColor: 'rgba(34, 197, 94, 0.2)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 10, borderWidth: 1, borderColor: '#22c55e' }}>
-                    <Text style={{ color: '#4ade80', fontSize: 10, fontWeight: '700' }}>✓ Live Web Verified</Text>
-                  </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                  <Globe color="#38bdf8" size={14} style={{ marginRight: 6 }} />
+                  <Text style={{ color: '#38bdf8', fontSize: 12, fontWeight: '700', letterSpacing: 0.3 }}>
+                    Sources ({item.groundingSources.length})
+                  </Text>
                 </View>
 
                 {item.groundingSources.map((source: GroundingSource, sIdx: number) => (
