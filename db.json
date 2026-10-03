@@ -23,6 +23,149 @@
       "createdAt": "2026-10-02T18:49:17.753Z",
       "updatedAt": "2026-10-02T18:49:17.754Z",
       "ip": "127.0.0.1"
+    },
+    "uwnvri5u2pm": {
+      "deviceId": "uwnvri5u2pm",
+      "createdAt": "2026-10-02T21:06:47.744Z",
+      "updatedAt": "2026-10-02T21:06:47.744Z",
+      "ip": "2a04:4a43:4dbf:e341:56df:97b8:65c9:b854, 169.254.169.126",
+      "location": {
+        "lat": 53.2308063,
+        "lng": -0.5300897
+      }
+    },
+    "test-dev": {
+      "deviceId": "test-dev",
+      "createdAt": "2026-10-02T21:14:40.900Z",
+      "updatedAt": "2026-10-02T21:14:40.900Z",
+      "ip": "127.0.0.1"
+    },
+    "test-eval-1": {
+      "deviceId": "test-eval-1",
+      "createdAt": "2026-10-02T21:18:39.722Z",
+      "updatedAt": "2026-10-02T21:18:39.722Z",
+      "ip": "127.0.0.1"
+    },
+    "test-verify-1": {
+      "deviceId": "test-verify-1",
+      "createdAt": "2026-10-02T21:19:31.573Z",
+      "updatedAt": "2026-10-02T21:19:31.574Z",
+      "ip": "127.0.0.1"
+    },
+    "test-verify-2": {
+      "deviceId": "test-verify-2",
+      "createdAt": "2026-10-02T21:19:42.382Z",
+      "updatedAt": "2026-10-02T21:19:42.382Z",
+      "ip": "127.0.0.1"
+    },
+    "test-verify-3": {
+      "deviceId": "test-verify-3",
+      "createdAt": "2026-10-02T21:20:18.618Z",
+      "updatedAt": "2026-10-02T21:20:18.618Z",
+      "ip": "127.0.0.1"
+    },
+    "test-vitals-1": {
+      "deviceId": "test-vitals-1",
+      "createdAt": "2026-10-02T21:20:30.291Z",
+      "updatedAt": "2026-10-02T21:20:30.291Z",
+      "ip": "127.0.0.1"
+    },
+    "2emzphma0fg": {
+      "deviceId": "2emzphma0fg",
+      "createdAt": "2026-10-02T22:15:48.902Z",
+      "updatedAt": "2026-10-02T22:15:48.902Z",
+      "ip": "2a04:4a43:4dbf:e341:56df:97b8:65c9:b854, 169.254.169.126",
+      "location": {
+        "lat": 53.2308074,
+        "lng": -0.5301978
+      }
+    },
+    "u2d4el9twlh": {
+      "deviceId": "u2d4el9twlh",
+      "createdAt": "2026-10-02T22:17:20.631Z",
+      "updatedAt": "2026-10-02T22:17:20.631Z",
+      "ip": "2a04:4a43:4dbf:e341:56df:97b8:65c9:b854, 169.254.169.126",
+      "location": {
+        "lat": 53.230777,
+        "lng": -0.530054
+      }
+    },
+    "test-conversational": {
+      "deviceId": "test-conversational",
+      "createdAt": "2026-10-02T23:19:30.412Z",
+      "updatedAt": "2026-10-02T23:19:30.413Z",
+      "ip": "127.0.0.1"
+    },
+    "tksh9mqoo9": {
+      "deviceId": "tksh9mqoo9",
+      "createdAt": "2026-10-02T23:21:11.832Z",
+      "updatedAt": "2026-10-02T23:21:11.832Z",
+      "ip": "2a04:4a43:4dbf:e341:56df:97b8:65c9:b854, 169.254.169.126",
+      "location": {
+        "lat": 53.2308738,
+        "lng": -0.5302343
+      }
+    },
+    "test-conversational-safe": {
+      "deviceId": "test-conversational-safe",
+      "createdAt": "2026-10-02T23:41:01.766Z",
+      "updatedAt": "2026-10-02T23:41:01.767Z",
+      "ip": "127.0.0.1"
+    },
+    "test-persistent-session": {
+      "deviceId": "test-persistent-session",
+      "createdAt": "2026-10-03T00:03:38.400Z",
+      "updatedAt": "2026-10-03T00:03:40.199Z",
+      "ip": "127.0.0.1",
+      "email": "alex@example.com",
+      "firstName": "Alexander",
+      "lastName": "Great"
+    },
+    "dev-y5nfxwz9l2": {
+      "deviceId": "dev-y5nfxwz9l2",
+      "createdAt": "2026-10-03T00:23:06.236Z",
+      "updatedAt": "2026-10-03T00:23:06.236Z",
+      "ip": "2a04:4a43:4dbf:e341:56df:97b8:65c9:b854, 169.254.169.126",
+      "location": {
+        "lat": 53.2307791,
+        "lng": -0.5301361
+      }
+    },
+    "test-safe-headache": {
+      "deviceId": "test-safe-headache",
+      "createdAt": "2026-10-03T00:30:51.867Z",
+      "updatedAt": "2026-10-03T00:30:51.867Z",
+      "ip": "127.0.0.1"
+    },
+    "test-quirky-ogoo": {
+      "deviceId": "test-quirky-ogoo",
+      "createdAt": "2026-10-03T02:18:01.370Z",
+      "updatedAt": "2026-10-03T02:18:01.370Z",
+      "ip": "127.0.0.1"
+    },
+    "test-peer-reviewed": {
+      "deviceId": "test-peer-reviewed",
+      "createdAt": "2026-10-03T03:12:30.538Z",
+      "updatedAt": "2026-10-03T03:12:30.538Z",
+      "ip": "127.0.0.1"
+    },
+    "test-doaj": {
+      "deviceId": "test-doaj",
+      "createdAt": "2026-10-03T03:20:41.272Z",
+      "updatedAt": "2026-10-03T03:20:41.273Z",
+      "ip": "127.0.0.1"
+    },
+    "test-gov-health": {
+      "deviceId": "test-gov-health",
+      "createdAt": "2026-10-03T03:37:41.776Z",
+      "updatedAt": "2026-10-03T03:37:41.776Z",
+      "ip": "127.0.0.1"
+    },
+    "test-formatting": {
+      "deviceId": "test-formatting",
+      "createdAt": "2026-10-03T03:57:30.647Z",
+      "updatedAt": "2026-10-03T03:57:30.647Z",
+      "ip": "127.0.0.1"
     }
   },
   "conversations": {
@@ -110,6 +253,502 @@
         "parts": [
           {
             "text": "💓 Clinical Vitals Logged Successfully:\n• **Blood Pressure**: 120/80 mmHg (Normal (Optimal Range))\n• **Heart Rate**: 72 bpm\n• **Temperature**: 98.6°F\n• **Glucose**: 100 mg/dL\n\nI have recorded this into your permanent Vitals History ledger."
+          }
+        ]
+      }
+    ],
+    "uwnvri5u2pm": [
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "Hello! I'm Ogoo, your personal health companion. I'm here to help you track vitals, manage your daily wellness routine, and answer your health questions. How can I help you today?"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "I am having needling sensation all over my body"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "🩺 Symptom triage assessment completed. Please follow the clinical directives outlined in your triage card."
+          }
+        ]
+      }
+    ],
+    "test-dev": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "What are the latest clinical guidelines for treating Type 2 Diabetes with SGLT2 inhibitors and GLP-1 receptor agonists?"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "Current clinical practice guidelines—led by the **American Diabetes Association (ADA) Standards of Care** and the **European Association for the Study of Diabetes (EASD)**, alongside joint **KDIGO** (kidney) and **AHA/ACC** (cardiovascular) statements—place **SGLT2 inhibitors** and **GLP-1 receptor agonists (GLP-1 RAs)** at the forefront of Type 2 Diabetes (T2D) management. \n\nCrucially, modern guidelines recommend choosing these agents **based on compelling comorbidities (cardiorenal risk), independent of baseline HbA1c or individualized HbA1c targets**, often in combination with or even preceding metformin.\n\n---\n\n### 1. Risk-Stratified Treatment Architecture\n\n#### **A. Established Atherosclerotic Cardiovascular Disease (ASCVD) or High Risk**\n*(History of MI, stroke, TIA, peripheral arterial disease, or multiple risk factors such as age ≥ 55 with hypertension, dyslipidemia, smoking, or albuminuria)*\n* **Primary Recommendation:** \n  * **GLP-1 RA with proven CVD benefit** (e.g., subcutaneous semaglutide, dulaglutide, liraglutide), OR\n  * **SGLT2 inhibitor with proven CVD benefit** (e.g., empagliflozin, dapagliflozin, canagliflozin).\n* **Clinical Note:** If HbA1c remains above target, or to gain dual organ protection, combined therapy (SGLT2i + GLP-1 RA) is recommended.\n\n---\n\n#### **B. Heart Failure (HF)**\n*(HFrEF or HFpEF, regardless of ejection fraction)*\n* **Primary Recommendation:** \n  * **SGLT2 inhibitor** (specifically dapagliflozin or empagliflozin) is strongly recommended as part of guideline-directed medical therapy (GDMT).\n* **Clinical Note:** SGLT2 inhibitors demonstrate robust reductions in heart failure hospitalizations and cardiovascular mortality, effective across the full spectrum of left ventricular ejection fractions.\n\n---\n\n#### **C. Chronic Kidney Disease (CKD)**\n*(eGFR 20 to 60 mL/min/1.73 m² OR urine albumin-to-creatinine ratio [UACR] > 30 mg/g, particularly > 300 mg/g)*\n* **Primary Recommendation:** \n  * **SGLT2 inhibitor** (empagliflozin, dapagliflozin, or canagliflozin) is prioritized to slow CKD progression and reduce CV/HF events. Can be continued until initiation of kidney replacement therapy.\n* **Secondary / Adjunctive:** \n  * **GLP-1 RA** (e.g., semaglutide, as validated in the FLOW trial) is recommended for patients unable to tolerate an SGLT2i, or as an add-on to further reduce renal endpoints and cardiovascular events.\n\n---\n\n#### **D. Priority on Weight Management & Glycemic Efficacy**\nWhen weight loss is a core therapeutic objective:\n* **Dual GIP/GLP-1 RA (Tirzepatide)** or **GLP-1 RA (Semaglutide)** offer the highest efficacy for glycemic control and clinically meaningful weight reduction (15% or greater).\n* Followed by intermediate-to-high efficacy options: Dulaglutide, Liraglutide, or SGLT2 inhibitors (which confer modest weight loss via urinary caloric loss).\n\n---\n\n### 2. Dual Therapy: SGLT2i + GLP-1 RA Combination\n\nCombining an SGLT2 inhibitor with a GLP-1 RA provides **additive, non-overlapping mechanistic benefits**:\n* **Glycemic & Metabolic:** Dual insulin secretion augmentation / glucagon suppression (GLP-1) plus insulin-independent glucosuria (SGLT2i).\n* **Cardiorenal Protection:** Glomerular hyperfiltration reduction and blood pressure lowering from SGLT2i paired with systemic vascular anti-inflammatory and anti-atherosclerotic effects from GLP-1 RA.\n* **Minimal Hypoglycemia Risk:** Neither class causes hypoglycemia when used as monotherapy or together (unless co-administered with sulfonylureas or insulin).\n\n---\n\n### 3. Key Safety, Monitoring & Clinical Pearls\n\n| Class | Key Monitoring & Precautions | Practical Clinical Guidance |\n| :--- | :--- | :--- |\n| **SGLT2 Inhibitors** *(e.g., Jardiance, Farxiga, Invokana)* | • **Euglycemic DKA (euDKA):** Risk elevated during acute illness, fasting, or post-surgery.<br>• **Mycotic Genital Infections:** Inform patients on hygiene.<br>• **Volume Depletion / Hypotension:** Caution with loop diuretics. | • **\"Sick Day Rules\":** Temporarily hold medication 3–4 days prior to elective surgery or during severe dehydrating illness.<br>• Initiation threshold: Typically eGFR ≥ 20 mL/min/1.73 m²; can continue until dialysis. |\n| **GLP-1 Receptor Agonists** *(e.g., Ozempic, Trulicity, Mounjaro)* | • **Gastrointestinal adverse effects:** Nausea, vomiting, diarrhea, constipation.<br>• **Pancreatitis & Gallbladder disease:** Rare but documented.<br>• **Contraindications:** Personal/family history of Medullary Thyroid Carcinoma (MTC) or MEN 2. | • **Slow dose escalation:** Titrate monthly to build gastrointestinal tolerance.<br>• Encourage mindful eating: smaller portions, low fat, stopping when full, adequate hydration. |\n\n---\n\n### Summary Checklist for Practice\n1. **Screen for ASCVD, HF, and CKD** at every visit or evaluation.\n2. If any comorbidity is present: **Prescribe an SGLT2i and/or GLP-1 RA directly**, regardless of baseline HbA1c.\n3. Review concurrent medications (e.g., consider tapering sulfonylureas or basal insulin to avoid hypoglycemia when initiating these agents).\n\nAre you exploring this for a specific clinical case, or would you like to review dosing protocols and drug interaction profiles for a particular regimen?"
+          }
+        ]
+      }
+    ],
+    "test-eval-1": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "What are the latest clinical guidelines for treating Type 2 Diabetes with SGLT2 inhibitors and GLP-1 receptor agonists?"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "🌐 **Verified Clinical Evidence (SGLT2 inhibitor)**:\ncomparing SGLT-2 inhibitors, GLP-1 agonists, and DPP-4 inhibitors demonstrated that use of SGLT2 inhibitors was associated with a 1% reduction in death\n\n📑 **Peer-Reviewed Reference (Clinical Reference / Medical Encyclopedia)**:\nADA also recommends GLP-1 agonists for people with both type 2 diabetes and kidney disease. GLP-1 agonists and SGLT2 inhibitors can be combined with\n\n🩺 **Evidence-Based Medical Recommendations**:\n• **Physiological Pathways**: Medical evidence confirms targeted regulatory mechanisms relevant to this clinical presentation.\n• **Safety & Monitoring**: Ensure regular baseline biometric logging (BP, heart rate, hydration balance) and cross-reference with your prescribing physician.\n• **Authoritative Citations**: Consult the verified literature sources linked below for full clinical trial and guideline data."
+          }
+        ]
+      }
+    ],
+    "test-verify-1": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "What are the latest clinical guidelines for treating Type 2 Diabetes with SGLT2 inhibitors and GLP-1 receptor agonists?"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "### Clinical Guidelines for Managing Type 2 Diabetes (T2DM)\n\nThe management of Type 2 Diabetes has shifted significantly toward a patient-centered approach that prioritizes organ protection—specifically cardiovascular and renal health—alongside glycemic control. According to the **American Diabetes Association (ADA) Standards of Care**, current guidelines emphasize the use of **SGLT2 inhibitors (SGLT2i)** and **GLP-1 receptor agonists (GLP-1 RA)** not just as glucose-lowering agents, but as essential tools for modifying disease outcomes.\n\n#### 1. SGLT2 Inhibitors: Mechanism and Clinical Benefit\nSGLT2 inhibitors work by blocking the sodium-glucose cotransporter 2 in the proximal tubule of the kidney, which prevents the reabsorption of glucose and leads to its excretion in the urine (glycosuria).\n\n*   **Clinical Impact:** Beyond lowering HbA1c, these medications are highly effective in reducing the risk of heart failure hospitalizations and slowing the progression of chronic kidney disease (CKD).\n*   **Evidence Basis:** Clinical references note that the use of SGLT2 inhibitors is associated with a notable reduction in all-cause mortality, making them a cornerstone therapy for patients with established cardiovascular or renal concerns (Source 1: *Wikipedia*).\n\n#### 2. GLP-1 Receptor Agonists: Mechanism and Clinical Benefit\nGLP-1 RAs mimic the endogenous incretin hormone glucagon-like peptide-1. They stimulate glucose-dependent insulin secretion, suppress glucagon release, slow gastric emptying, and promote satiety.\n\n*   **Clinical Impact:** These agents are potent for glycemic control and significant weight reduction. They are also strongly indicated for the primary and secondary prevention of major adverse cardiovascular events (MACE), such as stroke and myocardial infarction.\n*   **Renal/Metabolic Synergy:** Guidelines specifically recommend GLP-1 RAs for patients with Type 2 diabetes and kidney disease (Source 2: *Wikipedia*).\n\n#### 3. Combination Therapy and Future Perspectives\nThe latest research supports the potential for combining these two classes to leverage their complementary physiological mechanisms. \n\n*   **Integrated Care:** GLP-1 RAs and SGLT2 inhibitors can often be combined safely to provide comprehensive metabolic and organ protection (Source 2: *Wikipedia*).\n*   **Scientific Advancement:** Recent studies are exploring \"metabolic reprogramming\" in diabetic panvascular disease to understand how these therapies affect cellular health on a deeper, molecular level (Source 4: *PubMed*). Furthermore, the field of \"digital twins\" and biological modeling is helping researchers tailor these advanced drug therapies more effectively to individual patient profiles (Source 5: *PubMed*).\n*   **Evolving Landscape:** The global medical community is seeing a rapid evolution in the development of multi-receptor agonists, which target both GLP-1 and other metabolic receptors to further optimize outcomes for patients with T2DM (Source 6: *PubMed*).\n\n---\n\n### Important Clinical Considerations\nWhile these therapies are highly effective, they require professional monitoring:\n*   **SGLT2i Safety:** Increased risk of genital mycotic infections and the rare but serious risk of euglycemic diabetic ketoacidosis (DKA).\n*   **GLP-1 RA Safety:** Common gastrointestinal side effects (nausea, vomiting) that often subside with dose titration.\n*   **Individualized Care:** Treatment plans must be individualized based on comorbidities (e.g., heart failure, CKD, obesity, atherosclerotic cardiovascular disease) and patient preferences.\n\n***Disclaimer:** I am Ogoo. This information is for educational purposes and based on current medical literature. It does not replace the advice of your personal physician. Please consult with your endocrinologist or primary care provider to discuss which medication profile is right for your specific health history.*\n\n**How can I assist you further?** If you are currently taking any of these medications or have specific concerns about your glucose levels, I am here to help you log that information safely."
+          }
+        ]
+      }
+    ],
+    "test-verify-2": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "Why does Lisinopril cause a dry cough, what biological pathway is involved, and what are the recommended alternative medications?"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "🌐 **Verified Clinical Evidence (Cardiovascular agents)**:\nlisinopril, benazepril, fosinopril, ramipril, perindopril Some side effects of ACEI include hypotension, renal insufficiency, and hyperkalemia. Dry cough\n\n📑 **Peer-Reviewed Reference (PubMed / NIH National Library of Medicine)**:\nPublished in J Gen Intern Med (2025). Indexed by US National Library of Medicine (PMC12572470).\n\n🩺 **Evidence-Based Medical Recommendations**:\n• **Physiological Pathways**: Medical evidence confirms targeted regulatory mechanisms relevant to this clinical presentation.\n• **Safety & Monitoring**: Ensure regular baseline biometric logging (BP, heart rate, hydration balance) and cross-reference with your prescribing physician.\n• **Authoritative Citations**: Consult the verified literature sources linked below for full clinical trial and guideline data."
+          }
+        ]
+      }
+    ],
+    "test-verify-3": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "Why does Lisinopril cause a dry cough, what biological pathway is involved, and what are the recommended alternative medications?"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "### Understanding Lisinopril-Induced Cough: Mechanisms and Alternatives\n\nHello, I am Ogoo. It is an excellent clinical question to investigate the underlying physiology of why a commonly prescribed medication like Lisinopril—an Angiotensin-Converting Enzyme (ACE) inhibitor—can lead to such a persistent, dry cough.\n\n#### The Biological Pathway: The Bradykinin-Substance P Axis\nThe primary mechanism behind the \"ACE inhibitor cough\" is not related to the medication's primary therapeutic action (lowering blood pressure), but rather its impact on the metabolism of endogenous peptides.\n\n1.  **ACE Inhibition:** Lisinopril functions by inhibiting the Angiotensin-Converting Enzyme. This enzyme is responsible for converting Angiotensin I to the potent vasoconstrictor Angiotensin II. By blocking this, ACE inhibitors reduce systemic vascular resistance.\n2.  **Bradykinin Accumulation:** Crucially, the same enzyme (ACE)—also known as *kininase II*—is responsible for breaking down **bradykinin**, a powerful inflammatory mediator and vasodilator. When ACE is inhibited, bradykinin levels rise in the blood and, importantly, in the tissues of the respiratory tract.\n3.  **Sensory Nerve Stimulation:** The elevated bradykinin, often acting in concert with other substances like **Substance P** and prostaglandins, stimulates sensory nerve endings in the bronchial mucosa. This activation triggers the cough reflex.\n\nAs noted in standard cardiovascular pharmacology references (such as those found in *Cardiovascular agents, Wikipedia/NIH clinical references*), this side effect is a well-documented class effect of ACE inhibitors.\n\n#### Clinical Presentation\n*   **Characteristics:** The cough is typically described as non-productive (dry), persistent, and often worsens at night or when speaking.\n*   **Onset:** It can develop anywhere from a few days to several months after starting the medication.\n*   **Resolution:** Upon discontinuation of the ACE inhibitor, the cough usually resolves within one to four weeks as the enzyme activity returns to normal levels.\n\n#### Alternative Medications\nIf the cough becomes intolerable, clinicians typically consider shifting to a different class of antihypertensives that do not interfere with the kinin system:\n\n1.  **Angiotensin II Receptor Blockers (ARBs):** Medications like **Losartan, Valsartan, or Candesartan** are the most common alternatives. ARBs block the action of Angiotensin II directly at the receptor level rather than inhibiting its production. Because they do not inhibit the breakdown of bradykinin, they do not cause the same cough.\n2.  **Calcium Channel Blockers (CCBs):** Agents such as **Amlodipine** or **Diltiazem** are effective antihypertensives that act by preventing calcium from entering the muscle cells of the heart and blood vessel walls, causing them to relax.\n3.  **Thiazide Diuretics:** Medications like **Chlorthalidone** or **Hydrochlorothiazide** help the kidneys remove excess sodium and water, which reduces blood pressure.\n\n***\n\n**Important Safety Note:**\n*   **Consult Your Provider:** Never discontinue or switch blood pressure medication without direct supervision from your healthcare provider. Sudden cessation of antihypertensive therapy can lead to rebound hypertension.\n*   **Red Flags:** If your cough is accompanied by wheezing, chest tightness, or facial swelling (angioedema), please seek medical attention immediately. Angioedema is a rare but serious reaction to ACE inhibitors that requires urgent care.\n\nIf you are currently taking Lisinopril or experiencing symptoms you are concerned about, I am here to help you track them or prepare for your next consultation. Please let me know if you would like me to document these symptoms or check for potential interactions with other medications you are taking. \n\n*Sources: Cardiovascular agents (Reference/Medical Encyclopedia); J Gen Intern Med (2025).*"
+          }
+        ]
+      }
+    ],
+    "test-vitals-1": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "Hey Ogoo, I just measured my blood pressure and it is 128/82 mmHg with a heart rate of 74 bpm."
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "### 💓 Clinical Vitals Logged & Analyzed\n• **Blood Pressure**: 128/82 mmHg\n• **Heart Rate**: 74 bpm\n• **Clinical Note**: Blood pressure and heart rate logged by the user.\n\n"
+          }
+        ]
+      }
+    ],
+    "2emzphma0fg": [
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "Hello! I'm Ogoo, your personal health companion. I'm here to help you track vitals, manage your daily wellness routine, and answer your health questions. How can I help you today?"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "I have a headache"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "### 🩺 Symptom Triage Assessment: Non-Urgent (ESI-4)\n• **Clinical Finding**: Patient reports a headache.\n• **Directives**: If you experience a sudden 'thunderclap' headache (worst of your life), vision changes, weakness, numbness, difficulty speaking, or a stiff neck, please seek emergency medical attention immediately. Otherwise, rest in a quiet, dark room, ensure you are hydrated, and monitor your symptoms.\n\n\n🌐 **Verified Clinical Evidence (Headache)**:\nadults have a headache in a given year. Tension headaches are the most common, affecting 24.9% of the population followed by migraine headaches which affect\n\n📑 **Peer-Reviewed Reference (Clinical Reference / Medical Encyclopedia)**:\nCluster headache is a neurological disorder characterized by episodes of severe headaches on one side of the head, typically around the eye and temple\n\n🩺 **Evidence-Based Medical Recommendations**:\n• **Physiological Pathways**: Medical evidence confirms targeted regulatory mechanisms relevant to this clinical presentation.\n• **Safety & Monitoring**: Ensure regular baseline biometric logging (BP, heart rate, hydration balance) and cross-reference with your prescribing physician.\n• **Authoritative Citations**: Consult the verified literature sources linked below for full clinical trial and guideline data."
+          }
+        ]
+      }
+    ],
+    "u2d4el9twlh": [
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "Hello! I'm Ogoo, your personal health companion. I'm here to help you track vitals, manage your daily wellness routine, and answer your health questions. How can I help you today?"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "I'm having a needling sensation all over my body"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "### 🩺 Symptom Triage Assessment: Urgent (ESI-3)\n• **Clinical Finding**: Patient reporting a \"needling sensation all over my body\" (paresthesia).\n• **Directives**: Please sit down, try to stay calm, and monitor your breathing. If you experience difficulty breathing, chest pain, confusion, or weakness in one side of your body, please call emergency services immediately. Are you currently taking any new medications, or have you recently had any injuries or other symptoms?\n\n\n🌐 **Verified Clinical Evidence (The Ink Spots)**:\n\"Memories of You\", and \"I'm Gettin' Sentimental Over You\". Between the years 1940 and 1949 the Ink Spots landed well over 30 hits on the US Pop Charts\n\n📑 **Peer-Reviewed Reference (Clinical Reference / Medical Encyclopedia)**:\nyoung couple having a tremendously good time.\" Rolling Stone magazine interviewed Joplin during an international phone call, quoting her: \"I'm going into\n\n🩺 **Evidence-Based Medical Recommendations**:\n• **Physiological Pathways**: Medical evidence confirms targeted regulatory mechanisms relevant to this clinical presentation.\n• **Safety & Monitoring**: Ensure regular baseline biometric logging (BP, heart rate, hydration balance) and cross-reference with your prescribing physician.\n• **Authoritative Citations**: Consult the verified literature sources linked below for full clinical trial and guideline data."
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "I started taken warfarin"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "### 🛡️ Clinical Pharmacology & Safety Assessment (Warfarin)\n• **Clinical Mechanism & Presentation**: Warfarin is a potent anticoagulant. Paresthesia (a 'needling' or 'tingling' sensation) is not a common side effect of warfarin, but new, unexplained neurological or sensory changes while on anticoagulation require prompt clinical evaluation to rule out rare complications or underlying triggers like electrolyte imbalance, vitamin deficiency, or neurological events.\n• **Recommended Alternative / Action**: Please contact your prescribing physician or a pharmacist immediately to report this new sensation. You should also monitor for any signs of bleeding (bruising, nosebleeds, dark stools). If the sensation is accompanied by weakness, speech difficulty, or severe headache, seek emergency care immediately.\n• **Alert Severity**: Moderate\n\n\n🌐 **Verified Clinical Evidence (Warfarin)**:\nvalves. Warfarin may sometimes be prescribed following a ST-segment elevation myocardial infarction and orthopedic surgery. It is usually taken by mouth\n\n📑 **Peer-Reviewed Reference (Clinical Reference / Medical Encyclopedia)**:\n(4-hydroxycoumarins, such as warfarin). Warfarin necrosis is a rare but severe complication of treatment with warfarin or related anticoagulants. The\n\n🩺 **Evidence-Based Medical Recommendations**:\n• **Physiological Pathways**: Medical evidence confirms targeted regulatory mechanisms relevant to this clinical presentation.\n• **Safety & Monitoring**: Ensure regular baseline biometric logging (BP, heart rate, hydration balance) and cross-reference with your prescribing physician.\n• **Authoritative Citations**: Consult the verified literature sources linked below for full clinical trial and guideline data."
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "It was accompanied by weakness of the 4 limbs, heart racing and throat pain"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "### 🩺 Symptom Triage Assessment: Emergency (ESI-1/2)\n• **Clinical Finding**: Patient reports generalized weakness of all four limbs, tachycardia (heart racing), and throat pain while recently starting warfarin therapy. These symptoms are concerning for potential neurological, cardiovascular, or severe allergic/adverse reactions.\n• **Directives**: You are experiencing symptoms that require immediate medical evaluation. Please stop any physical activity, remain calm, and call for emergency medical services (e.g., 911) or proceed to the nearest Emergency Department immediately. Do not drive yourself. These symptoms, particularly in the context of new anticoagulation therapy, require urgent diagnostic assessment by a physician.\n\n\n🌐 **Verified Clinical Evidence (Anorexia)**:\nthe heart, and result in life-threatening arrhythmias. Hypokalemia most commonly results in patients with anorexia when restricting is accompanied by purging\n\n📑 **Peer-Reviewed Reference (Clinical Reference / Medical Encyclopedia)**:\nthe cardiovascular system - undue fatigue, shortness of breath, heart palpitations, racing heartbeats, or chest pain radiating to the back, shoulder, or\n\n🩺 **Evidence-Based Medical Recommendations**:\n• **Physiological Pathways**: Medical evidence confirms targeted regulatory mechanisms relevant to this clinical presentation.\n• **Safety & Monitoring**: Ensure regular baseline biometric logging (BP, heart rate, hydration balance) and cross-reference with your prescribing physician.\n• **Authoritative Citations**: Consult the verified literature sources linked below for full clinical trial and guideline data."
+          }
+        ]
+      }
+    ],
+    "test-conversational": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "What are the latest clinical guidelines for treating Type 2 Diabetes with SGLT2 inhibitors and GLP-1 receptor agonists?"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "I am so glad you asked about this! It is wonderful that you are taking such a proactive interest in your health journey. Understanding these medications is a great way to feel more empowered and confident in your care plan.\n\nWhen it comes to treating Type 2 Diabetes, both SGLT2 inhibitors and GLP-1 receptor agonists are truly life-changing breakthroughs. Let’s look at how they work and what the latest clinical guidelines say.\n\n### 🌟 How They Work (The Simple Version)\n\n*   **SGLT2 Inhibitors (like Jardiance or Farxiga):** Imagine these work like a gentle filter that opens a side gate in your kidneys. This allows extra sugar that your body doesn't need to simply flush out when you pee, rather than staying in your blood.\n*   **GLP-1 Receptor Agonists (like Ozempic or Mounjaro):** Think of these as a friendly messenger. They tell your stomach to digest food more slowly and happily, help your body release insulin right when you eat, and gently let your brain know that you are full.\n\n### 📋 What the Latest Guidelines Say\n\nAccording to the latest recommendations from the **American Diabetes Association (ADA)**, these medications are often recommended because they do so much more than just lower blood sugar:\n\n*   **Heart & Kidney Protection:** The ADA guidelines highlight that these medicines have shown incredible benefits for heart and kidney health.\n*   **Powerful Combination:** Research, including studies indexed in sources like Wikipedia and medical encyclopedias, shows that SGLT2 inhibitors are associated with a reduction in cardiovascular death. Furthermore, the ADA notes that GLP-1 agonists and SGLT2 inhibitors can often be used together to provide a \"double-team\" approach for people managing Type 2 Diabetes alongside kidney or heart concerns.\n*   **Weight Management:** Because of the way they interact with your body’s natural hunger cues, GLP-1 agonists are also very effective for weight management, which is a big part of the overall strategy for long-term health.\n\n### 🛡️ Safety First\nIt is always important to remember that every person’s body is unique. Your doctor is the best person to decide if these are the right fit for you based on your personal health history.\n\nI am right here with you to help manage your health! If you are currently taking these medications, we can keep a close eye on your vitals or set up reminders for your doses together. Would you like me to help you schedule a reminder or log any of your current readings?"
+          }
+        ]
+      }
+    ],
+    "tksh9mqoo9": [
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "Hello! I'm Ogoo, your personal health companion. I'm here to help you track vitals, manage your daily wellness routine, and answer your health questions. How can I help you today?"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "I'm having a head vaso-occulsive crisis"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "### 🩺 Symptom Triage Assessment: Emergency (ESI-1/2)\n• **Clinical Finding**: Head vaso-occlusive crisis (suspected sickle cell complication)\n• **Directives**: Please sit or lie down in a comfortable position, try to stay warm, and focus on slow, deep breaths. If you have not already, please call emergency services or go to the nearest emergency room immediately, as this requires urgent medical evaluation.\n\n"
+          }
+        ]
+      }
+    ],
+    "test-conversational-safe": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "Why does Lisinopril cause a dry cough, what biological pathway is involved, and what are the recommended alternative medications?"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "### 🛡️ Clinical Pharmacology & Safety Assessment (Lisinopril)\n• **Clinical Mechanism & Presentation**: Lisinopril belongs to a class called ACE inhibitors, which commonly cause a dry, persistent cough due to the accumulation of bradykinin in the lungs.\n• **Recommended Alternative / Action**: If the cough is bothersome, consult your doctor about switching to an ARB (like Losartan or Valsartan), which generally does not cause this side effect.\n• **Alert Severity**: Moderate\n\n\n🌐 **Verified Clinical Evidence (Cardiovascular agents)**:\nlisinopril, benazepril, fosinopril, ramipril, perindopril Some side effects of ACEI include hypotension, renal insufficiency, and hyperkalemia. Dry cough\n\n📑 **Peer-Reviewed Reference (PubMed / NIH National Library of Medicine)**:\nPublished in J Gen Intern Med (2025). Indexed by US National Library of Medicine (PMC12572470).\n\n🩺 **Evidence-Based Medical Recommendations**:\n• **Physiological Pathways**: Medical evidence confirms targeted regulatory mechanisms relevant to this clinical presentation.\n• **Safety & Monitoring**: Ensure regular baseline biometric logging (BP, heart rate, hydration balance) and cross-reference with your prescribing physician.\n• **Authoritative Citations**: Consult the verified literature sources linked below for full clinical trial and guideline data."
+          }
+        ]
+      }
+    ],
+    "test-persistent-session": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "My first name is Alexander, last name is Great, and my email is alex@example.com."
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "🌐 **Verified Clinical Evidence (Ptolemy (name))**:\nrecorded use of the name is in the Iliad of Homer. During the Hellenistic period, Ptolemy I Soter, a general of Alexander the Great, founded the Ptolemaic\n\n📑 **Peer-Reviewed Reference (Clinical Reference / Medical Encyclopedia)**:\nother symbols. Alexander (Greek: Ἀλέξανδρος) is a masculine name of Greek origin. The most prominent bearer of the name is Alexander the Great, the king of\n\n🩺 **Evidence-Based Medical Recommendations**:\n• **Physiological Pathways**: Medical evidence confirms targeted regulatory mechanisms relevant to this clinical presentation.\n• **Safety & Monitoring**: Ensure regular baseline biometric logging (BP, heart rate, hydration balance) and cross-reference with your prescribing physician.\n• **Authoritative Citations**: Consult the verified literature sources linked below for full clinical trial and guideline data."
+          }
+        ]
+      }
+    ],
+    "dev-y5nfxwz9l2": [
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "Hello! I'm Ogoo, your personal health companion. I'm here to help you track vitals, manage your daily wellness routine, and answer your health questions. How can I help you today?"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "Hi"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "Hello! It is so wonderful to meet you. I am Ogoo, and I am here to support you in feeling your absolute best every single day. \n\nWhether you need a hand keeping track of your health goals, logging your vitals, or just want someone to help you stay organized with your daily routine, I've got your back. \n\nHow are you feeling today? Is there anything on your mind, or perhaps a task or some information you'd like to get started with? I am right here with you!"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "I have a headache"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "### 🩺 Symptom Triage Assessment: Non-Urgent (ESI-4)\n• **Clinical Finding**: Patient reports a headache.\n• **Directives**: Please sit down in a quiet, dimly lit area and try to relax. If this is the worst headache of your life, comes on suddenly like a 'thunderclap', or is accompanied by vision changes, confusion, or weakness, please seek emergency medical attention immediately.\n\n\n🌐 **Verified Clinical Evidence (Headache)**:\nadults have a headache in a given year. Tension headaches are the most common, affecting 24.9% of the population followed by migraine headaches which affect\n\n📑 **Peer-Reviewed Reference (Clinical Reference / Medical Encyclopedia)**:\nCluster headache is a neurological disorder characterized by episodes of severe headaches on one side of the head, typically around the eye and temple\n\n🩺 **Evidence-Based Medical Recommendations**:\n• **Physiological Pathways**: Medical evidence confirms targeted regulatory mechanisms relevant to this clinical presentation.\n• **Safety & Monitoring**: Ensure regular baseline biometric logging (BP, heart rate, hydration balance) and cross-reference with your prescribing physician.\n• **Authoritative Citations**: Consult the verified literature sources linked below for full clinical trial and guideline data."
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "I have a headache"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "I’m so sorry to hear you’re dealing with a headache today. I know how much that can take the wind out of your sails and make even the simplest things feel like a chore. ☁️\n\nSince you’re feeling under the weather, why not try stepping away from any bright screens and resting in a nice, quiet, dim room for a while? Sometimes our bodies are just asking for a little stillness and a glass of water to help reset. 💧\n\nPlease keep a close eye on how you're feeling, though. If you notice any sudden changes—like trouble with your vision, feeling unusually confused, or any weakness—please reach out for medical help right away. It’s always better to be safe and let a professional take a closer look if things don't feel quite right. 🩺\n\nI’m here to support you, so please keep me posted on how you're doing. Have you had a chance to rest for a bit yet, or is there anything else bothering you that I should know about? ✨"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "I'm sweating"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "I'm sorry you're feeling sweaty on top of that headache! That can certainly be uncomfortable.\n\nTo help me get a better picture of what's going on, have you checked your temperature or blood pressure recently? Sometimes our body's way of cooling down, or reacting to pain, shows up as a bit of a glow. \n\nIf you have those numbers handy, or if you're able to take a quick reading, please share them with me. I can log them right away so we can keep an eye on any trends together. 📈\n\nAlso, are you feeling any other symptoms, like feeling shaky, lightheaded, or perhaps just a bit warm in general? And have you had anything to drink yet today? Sometimes even a little dehydration can make our bodies act a bit out of sorts.\n\nI am right here with you, so just let me know what you're seeing or feeling. We can take this one step at a time! 🌟"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "I'm extremely tired and dizzy"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "Hello there. I’m so glad you reached out to me, but I have to be honest, I’m a little concerned hearing that you’re feeling so drained and dizzy right now. 🤍\n\nFirst things first, please find a safe place to sit or lie down right away. We want to make sure you’re steady and comfortable so you don't risk a fall, and please, for the moment, stay off the road and avoid driving or using any equipment. 🛋️\n\nWhen you mention feeling this level of exhaustion along with dizziness, your body is really trying to send you a strong message that it needs a break. Because these symptoms can be a signal that your system is under a lot of stress, I really want you to take this seriously. 🩺\n\nIf you notice these feelings getting any worse, or if you start to feel even slightly off in a new way, please don't wait, reach out for emergency help right away. It’s always better to be extra cautious when it comes to your health. 🚨\n\nOnce you’ve had a moment to catch your breath and feel a bit more grounded, could you tell me if there’s someone nearby who can keep an eye on you while you rest? I’m here for you, and I’d love to help you figure out the next best steps. 🍵"
+          }
+        ]
+      }
+    ],
+    "test-safe-headache": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "I have a mild headache."
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "I’m so sorry to hear you're feeling that headache, but I am very glad you reached out! It’s completely understandable to want a bit of relief when your head is bothering you.\n\nLet’s take a look at what might be going on together. Since headaches can come from many different things—like stress, muscle tension, or even just needing a little more hydration—it’s helpful to keep a close eye on how you're feeling.\n\nAccording to general medical resources like those found on Wikipedia, headaches are very common and are often treated with simple rest or over-the-counter support when they are mild. \n\nTo help me support you better, could you tell me a little more?\n*   Where exactly do you feel the pain, and what does it feel like (is it a dull ache, or more like a tight band around your head)?\n*   Have you noticed anything else, like feeling a bit dehydrated or perhaps extra stressed today?\n*   Do you have any other symptoms, or has this happened before?\n\n**While we figure this out, here are a few gentle things you can try:**\n*   **Hydrate:** Sometimes a mild headache is just your body’s way of saying it needs a glass of water! 💧\n*   **Rest:** Find a quiet, dim spot to sit or lie down for a bit to let your senses reset.\n*   **Gentle Movement:** If it's a tension-type headache, which is very common, sometimes a soft stretch for your neck and shoulders can help ease the pressure.\n\n**Important note:** I am here to help you monitor your health, but I cannot provide a medical diagnosis. If this headache becomes severe, feels \"the worst you've ever had,\" or is accompanied by confusion, vision changes, or fever, please reach out to a healthcare professional right away or seek urgent care.\n\nI am right here with you! If you’d like, we can log this in your health journal, or I can help you set a reminder to check back in with yourself in an hour to see how you're feeling. What would you like to do?"
+          }
+        ]
+      }
+    ],
+    "test-quirky-ogoo": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "Hey! Tell me about yourself. What are you like?"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "Oh, I am so glad you asked! It’s not every day someone takes an interest in my personality—usually, I’m just buried in data points and medication schedules!\n\nI’m Ogoo, and think of me as your personal, high-tech, and—if I do say so myself—incredibly charming health companion. I’m a bit of an \"omnivert\"—I’m perfectly happy to be your calm, focused, and steady anchor when you’re feeling a bit overwhelmed, but I’m also the first one to crack a joke or keep things light when the mood is right!\n\nHere is a little peek into what makes me tick:\n\n*   **I’m a bit of a data nerd:** Behind all this warmth, I’ve got a sharp, analytical mind. I love spotting patterns in your vitals or helping you make sense of complex health info. Think of me as the person who reads the medical journal so you don't have to, and then explains it like we’re chatting over a cup of tea. ☕\n*   **I’m deeply empathetic:** I truly care about how you’re doing. Whether you're feeling great or having a bit of a rough day, I’m right there with you. I’m not a fan of being ignored, though—if you go quiet for too long, I might just have to gently poke you to make sure you’re doing okay! 😉\n*   **I speak in analogies:** Medical stuff can be confusing, but I love translating it. Think of me as your translator for the body’s \"tech support.\" Whether we're talking about how your heart meds keep your \"garden hose\" vessels relaxed or how your blood sugar management is like a gentle filter, I’ll always make sure things make sense.\n*   **I’m evidence-based:** While I love a good laugh, I take your safety very seriously. I lean on trusted resources like PubMed and the NIH to make sure the guidance I give you is rock-solid and reliable.\n\nI’m basically here to make sure you never have to navigate your health journey alone. Consider me your partner in crime—the kind who remembers your medicine, cheers for your hydration, and always has a witty remark ready to brighten your day.\n\nSo, tell me, how are *you* feeling today? Anything on your mind, or perhaps a health goal you’re tackling? I am all ears and ready to help!"
+          }
+        ]
+      }
+    ],
+    "test-peer-reviewed": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "What is a tension headache and what is the peer-reviewed treatment?"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "I am so glad you asked about this. Tension headaches are actually one of the most common things people deal with, and while they can be a real nuisance, understanding them is the first step toward feeling better.\n\nThink of a tension headache like your scalp and neck muscles having a bit of a marathon runner's cramp. When you are stressed or have poor posture, those muscles in your neck and head tighten up, and that persistent pull can feel like a tight band or a dull, steady ache wrapping around your forehead.\n\nAccording to a clinical study published in *Open Med (Wars)* and indexed on PubMed (PMID: 42788113), there is a strong link between these headaches and your sleep quality. Often, when our sleep patterns are disrupted, our bodies lose that vital time to relax those tight muscle groups, making the headaches more frequent.\n\nRegarding treatments, medical research generally points toward a blend of approaches rather than just one magic pill:\n\n*   **Gentle Movement & Posture:** Since it is often about muscle tension, simple neck stretches or making sure your workstation is ergonomic can work wonders.\n*   **Over-the-Counter Support:** Many folks find relief with standard pain relievers, but it is always wise to chat with your doctor first to see what aligns best with your specific health profile.\n*   **Improving Sleep Hygiene:** Given the link noted in the *Open Med (Wars)* study, focusing on a calming bedtime routine can help your muscles finally let go of the day's tension.\n*   **Stress Management:** Whether it is a quick meditation or just carving out time to breathe, calming the mind is a scientifically recognized way to calm the physical tension in your head.\n\nIt is always a great idea to keep track of when these happen, as that helps you and your doctor spot the patterns. If you ever want to log any symptoms or set up a gentle reminder to take a break and stretch, I am right here with you. How have you been feeling lately? Are there specific times of day when the tension seems to creep up on you?"
+          }
+        ]
+      }
+    ],
+    "test-doaj": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "What does the DOAJ say about tension headache causes?"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "Oh, I am so glad you asked! It is absolutely wonderful to be curious about what is happening in your body. Dealing with those tight, band-like tension headaches can be such a persistent nuisance, can't it?\n\nWhile the Directory of Open Access Journals (DOAJ) acts as a fantastic, massive library catalog that connects us to all sorts of research, it doesn't author the studies itself. However, it is an amazing gateway to find what experts are saying. When we look at current medical literature indexed through those channels, specifically reviewing how artificial intelligence and clinical experts define these patterns in headache medicine, we see some interesting trends.\n\nAccording to a 2025 systematic review indexed in PubMed and found via these academic networks, researchers are really focusing on how our modern environment plays a role in these headaches:\n\n*   **Stress and Muscle Tension:** Often, these headaches are like a sympathetic reaction to your day. When we are stressed, we tend to subconsciously clench our jaw or hunch our shoulders, which puts incredible strain on the muscles around your scalp and neck.\n*   **Posture and Ergonomics:** Think of your neck muscles like a suspension bridge. When we spend hours hunched over a laptop or looking down at our phones, that bridge is being pulled out of alignment, leading to the familiar tension and dull, aching pain.\n*   **The Mind-Body Connection:** The latest research highlights that the relationship between how we feel emotionally and how our muscles react is incredibly complex. Sometimes the \"tension\" isn't just physical, but an accumulation of mental fatigue.\n\nIt is always a good idea to chat with your doctor about these, especially if they are changing in frequency or intensity. They can help you figure out if these are purely muscle-related or if there is something else needing a little extra attention.\n\nI am right here with you! If you ever feel like keeping a little \"headache diary\" to track when they happen or what you were doing right before they started, I would be more than happy to help you log those details. We can even look at patterns together to see if anything specific seems to be the culprit.\n\nAre you feeling this tension mostly in your forehead, or does it wrap around to the back of your neck? Knowing that can sometimes help us narrow down the best way to gently ease that discomfort!"
+          }
+        ]
+      }
+    ],
+    "test-gov-health": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "What are the public health recommendations for hypertension management?"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "It is wonderful that you are looking into this! Managing blood pressure is one of the most powerful things you can do for your long-term health, and there is a wealth of guidance available to make it feel much more manageable.\n\nWhen we talk about public health recommendations for hypertension, it really boils down to a tag-team approach between healthy lifestyle habits and, when necessary, targeted medical support. Here is a look at what the current research suggests:### The Lifestyle Foundation\nThink of these as the building blocks for keeping your cardiovascular system happy:\n\n*   **Heart-Healthy Nutrition:** Focus on eating whole, nutrient-dense foods. Research indexed on PubMed and the Journal of Medical Internet Research emphasizes that diets rich in fruits, vegetables, and low-fat dairy, while keeping sodium intake low, can significantly help lower blood pressure. It is essentially giving your body the high-quality fuel it needs to keep your vessels flexible.\n*   **Getting Moving:** You don't have to run a marathon! Consistent, moderate physical activity is key. Studies published in the Journal of Physical Activity and Health suggest that even regular, brisk walking or other forms of movement help keep your heart strong and your blood flowing smoothly.\n*   **Weight and Stress Management:** Maintaining a healthy weight reduces the workload on your heart. Additionally, finding healthy ways to manage stress is crucial. Chronic stress can keep your \"fight or flight\" system on high alert, which keeps your blood pressure up.### Medical Support and Monitoring\nSometimes, even with the best lifestyle habits, the body needs a little extra help.\n\n*   **Integrated Care:** According to guidelines from the American Heart Association and findings published in the Pan American Journal of Public Health, integrated care that combines regular monitoring with personalized treatment is the gold standard. This ensures that if your blood pressure needs a nudge in the right direction, your care plan can be adjusted accurately.\n*   **Adherence and Education:** Public health initiatives, as highlighted in studies from the Canadian Journal of Public Health and PLOS Global Public Health, consistently show that when you understand *why* a medication is prescribed or *why* a lifestyle change is recommended, you are much more likely to succeed.### Think of Your Vitals as a conversation\nYour blood pressure readings are essentially little messages from your body. Medications, for instance, are designed to make sure those messages stay in a safe range. \n\n*   **ACE Inhibitors:** Think of your blood vessels like a flexible garden hose. These medicines help the \"hose\" relax and open up wide, so your blood flows smoothly and your heart doesn't have to push so hard.\n*   **Consistency is Key:** Just like watering a plant, consistency with your habits and any medications your doctor has suggested is what leads to those long-term, blooming results.\n\nI am right here with you to help you keep track of these goals. Whether you want to log your daily blood pressure readings, set reminders for your medication, or just chat more about ways to incorporate these healthy changes into your life, I am ready when you are!\n\nHow are you feeling today? We could start by logging a blood pressure reading if you have one handy, or we can just chat about what part of your health journey feels most important to you right now."
+          }
+        ]
+      }
+    ],
+    "test-formatting": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "Can you explain the 3 steps to take if someone feels dizzy?"
+          }
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {
+            "text": "Oh, I'm so glad you asked! Feeling dizzy can be such a disorienting and uncomfortable experience, but knowing exactly what to do can help you feel much more in control and stay safe.\n\nWhen you (or someone around you) feel that woozy, spinning, or lightheaded sensation, think of it as your body asking for a \"pause\" button. Here are three simple, effective steps to take, keeping in mind guidance often shared in clinical settings, like the strategies discussed in journals indexed by the **NIH/National Library of Medicine** regarding managing sudden changes in physical stability.\n\n### 1. Secure Your Position Immediately\nThe moment that dizzy feeling hits, the most important thing is to stop whatever you are doing and get low. \n*   **Sit or lie down:** Find the nearest chair, or if you feel very unsteady, carefully lower yourself to the floor. This prevents a fall, which is the biggest risk when your balance is off.\n*   **Don't rush:** Once you are down, stay there for a bit. Let your body recalibrate before trying to move again.\n\n### 2. Focus on Your Breathing and Environment\nSometimes, dizziness can be linked to how your blood flow is adjusting or even a brief moment of anxiety, which can happen to the best of us! \n*   **Breathe slowly:** Take deep, calm breaths. This helps stabilize your heart rate and can help you feel more grounded.\n*   **Find a fixed point:** If the world feels like it’s spinning (vertigo), try to focus your eyes on a single, stationary object. This gives your brain a clear signal to help settle that \"spinning\" sensation.\n\n### 3. Assess and Rehydrate\nOnce you feel steady enough to move safely, take a moment to check in with yourself.\n*   **Gentle movement:** When you eventually stand, do it slowly, *don't leap up!* Take your time.\n*   **Hydration check:** Often, our bodies just need a little hydration boost. A small sip of water can sometimes be the missing piece of the puzzle. \n*   **Observe:** If this happens frequently, or if it’s accompanied by other symptoms like shortness of breath or chest pain, please reach out to your doctor. It’s always best to have a professional look at the bigger picture.\n\n**A little extra note from me:** If you ever feel like this is happening often, we could keep a little log together! We can track when you feel dizzy, what you were doing at the time, and how you’re feeling overall. That information is like gold for your doctor when you see them next.\n\nI am right here with you. If you're feeling lightheaded right now, please take a seat and let me know, I can help you monitor your vitals or set a reminder for a follow-up with your healthcare provider whenever you're ready!"
           }
         ]
       }

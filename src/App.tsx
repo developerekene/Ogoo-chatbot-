@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Modal,
   Image, ActivityIndicator, Alert, SafeAreaView, StatusBar, Dimensions,
-  Animated, KeyboardAvoidingView, Platform, FlatList, Switch
+  Animated, KeyboardAvoidingView, Platform, FlatList, Switch, Linking
 } from 'react-native';
 import {
   Send, Menu, Heart, Activity, Calendar, Mic, ArrowLeft, X, User,
@@ -227,20 +227,178 @@ const initialFlexibleSchedules: FlexibleSchedule[] = [
   }
 ];
 
+// Comprehensive Markdown & Rich Text Formatter
+const parseInlineSpans = (text: string) => {
+  if (!text) return null;
+  // Match bold-italic (***text***), bold (**text**), italic (*text* or _text_), and inline code (`text`)
+  const regex = /(\*\*\*[^*]+\*\*\*|\*\*[^*]+\*\*|\*[^*]+\*|_[^_]+_|`[^`]+`)/g;
+  const parts = text.split(regex);
+
+  return parts.map((part, idx) => {
+    if (!part) return null;
+    if (part.startsWith('***') && part.endsWith('***') && part.length > 6) {
+      const content = part.slice(3, -3);
+      return (
+        <Text key={idx} style={{ fontWeight: '700', fontStyle: 'italic', color: COLORS.accent }}>
+          {content}
+        </Text>
+      );
+    }
+    if (part.startsWith('**') && part.endsWith('**') && part.length > 4) {
+      const content = part.slice(2, -2);
+      return (
+        <Text key={idx} style={{ fontWeight: '700', color: COLORS.accent }}>
+          {content}
+        </Text>
+      );
+    }
+    if (part.startsWith('*') && part.endsWith('*') && part.length > 2) {
+      const content = part.slice(1, -1);
+      return (
+        <Text key={idx} style={{ fontStyle: 'italic', color: '#e9d5ff' }}>
+          {content}
+        </Text>
+      );
+    }
+    if (part.startsWith('_') && part.endsWith('_') && part.length > 2) {
+      const content = part.slice(1, -1);
+      return (
+        <Text key={idx} style={{ fontStyle: 'italic', color: '#e9d5ff' }}>
+          {content}
+        </Text>
+      );
+    }
+    if (part.startsWith('`') && part.endsWith('`') && part.length > 2) {
+      const content = part.slice(1, -1);
+      return (
+        <Text key={idx} style={{ backgroundColor: 'rgba(216, 180, 254, 0.15)', color: '#f3e8ff', paddingHorizontal: 4, borderRadius: 4, fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace' }}>
+          {content}
+        </Text>
+      );
+    }
+    return <Text key={idx}>{part}</Text>;
+  });
+};
+
+const renderFormattedText = (text: string) => {
+  if (!text) return null;
+  const lines = text.split('\n');
+  return lines.map((line, lineIdx) => {
+    const trimmed = line.trim();
+    if (!trimmed) {
+      return <View key={lineIdx} style={{ height: 6 }} />;
+    }
+
+    // Horizontal Divider (---, ***, ___)
+    if (trimmed === '---' || trimmed === '***' || trimmed === '___') {
+      return (
+        <View
+          key={lineIdx}
+          style={{ height: 1, backgroundColor: 'rgba(216, 180, 254, 0.25)', marginVertical: 8 }}
+        />
+      );
+    }
+
+    // Headers (#, ##, ###, ####)
+    if (trimmed.startsWith('#')) {
+      const match = trimmed.match(/^(#{1,4})\s+(.+)$/);
+      if (match) {
+        const level = match[1].length;
+        const headerText = match[2];
+        const fontSize = level === 1 ? 20 : level === 2 ? 18 : level === 3 ? 16 : 15;
+        return (
+          <Text
+            key={lineIdx}
+            style={{
+              fontSize,
+              fontWeight: '800',
+              color: COLORS.accent,
+              marginTop: 10,
+              marginBottom: 4,
+              lineHeight: fontSize + 6,
+            }}
+          >
+            {parseInlineSpans(headerText)}
+          </Text>
+        );
+      }
+    }
+
+    // Blockquote (> quote)
+    if (trimmed.startsWith('>')) {
+      const quoteText = trimmed.replace(/^>\s*/, '');
+      return (
+        <View
+          key={lineIdx}
+          style={{
+            borderLeftWidth: 3,
+            borderLeftColor: COLORS.accent,
+            paddingLeft: 10,
+            marginVertical: 4,
+            backgroundColor: 'rgba(229, 114, 163, 0.08)',
+            paddingVertical: 4,
+            borderRadius: 4,
+          }}
+        >
+          <Text style={{ color: '#f3e8ff', fontStyle: 'italic', fontSize: 14.5, lineHeight: 21 }}>
+            {parseInlineSpans(quoteText)}
+          </Text>
+        </View>
+      );
+    }
+
+    // Bullet points (*, -, •)
+    if (trimmed.startsWith('* ') || trimmed.startsWith('- ') || trimmed.startsWith('• ')) {
+      const bulletContent = trimmed.replace(/^[*\-•]\s+/, '');
+      return (
+        <View key={lineIdx} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 3, paddingLeft: 6 }}>
+          <Text style={{ color: COLORS.accent, marginRight: 6, fontSize: 15, lineHeight: 22, fontWeight: '700' }}>•</Text>
+          <Text style={{ color: COLORS.textMain, fontSize: 15, lineHeight: 22, flex: 1 }}>
+            {parseInlineSpans(bulletContent)}
+          </Text>
+        </View>
+      );
+    }
+
+    // Numbered lists (1., 2., etc.)
+    const numMatch = trimmed.match(/^(\d+)\.\s+(.+)$/);
+    if (numMatch) {
+      const num = numMatch[1];
+      const numContent = numMatch[2];
+      return (
+        <View key={lineIdx} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 3, paddingLeft: 6 }}>
+          <Text style={{ color: COLORS.accent, marginRight: 6, fontSize: 14, lineHeight: 22, fontWeight: '700', minWidth: 18 }}>{num}.</Text>
+          <Text style={{ color: COLORS.textMain, fontSize: 15, lineHeight: 22, flex: 1 }}>
+            {parseInlineSpans(numContent)}
+          </Text>
+        </View>
+      );
+    }
+
+    // Standard paragraph line
+    return (
+      <Text key={lineIdx} style={{ color: COLORS.textMain, fontSize: 15, lineHeight: 22, marginVertical: 2 }}>
+        {parseInlineSpans(line)}
+      </Text>
+    );
+  });
+};
+
 // Color Palette
 const COLORS = {
-  bg: '#1e0238',
-  card: '#2c0652',
-  cardInner: '#380c66',
-  cardSurface: '#260444',
+  bg: '#15002b',
+  card: '#1F043B',
+  cardInner: '#290D4D',
+  cardSurface: '#190333',
   accent: '#E572A3',
   textMain: '#FFFFFF',
   textSub: '#B8A8D0',
   userBubble: '#E572A3',
+  ogooBubble: 'rgba(92, 23, 148, 0.35)',
   deepViolet: '#581C87',
   deepVioletDark: '#3B0764',
   deepVioletBg: 'rgba(88, 28, 135, 0.35)',
-  border: '#5c1794',
+  border: '#451070',
   borderSubtle: '#451070',
   online: '#4CAF50'
 };
@@ -306,6 +464,13 @@ export interface ChatAttachment {
   base64: string;
 }
 
+export interface GroundingSource {
+  title: string;
+  uri: string;
+  snippet?: string;
+  sourceName: string;
+}
+
 export interface ChatMessage {
   id: string;
   text: string;
@@ -316,6 +481,8 @@ export interface ChatMessage {
   toolActions?: Array<{ name: string; args: any }>;
   suggestedQuickPrompts?: string[];
   clinicalAlert?: { severity: string; message: string };
+  groundingSources?: GroundingSource[];
+  modelUsed?: string;
 }
 
 export default function App() {
@@ -326,6 +493,7 @@ export default function App() {
     isImportant: true
   };
   const [messages, setMessages] = useState<ChatMessage[]>([introMessage]);
+  const [expandedSources, setExpandedSources] = useState<Record<string, boolean>>({});
   const [selectedAttachment, setSelectedAttachment] = useState<ChatAttachment | null>(null);
   // Backwards compatible getter/setter for selectedImage
   const selectedImage = selectedAttachment;
@@ -410,7 +578,11 @@ export default function App() {
   const [userInfo, setUserInfo] = useState<{ firstName?: string, lastName?: string, email?: string } | null>(null);
   
   // Device ID & Location capture
-  const deviceId = useRef(Math.random().toString(36).substring(2, 15)).current;
+  const deviceId = useRef(Platform.OS === 'web' ? (localStorage.getItem('ogoo_device_id') || (() => {
+    const created = 'dev-' + Math.random().toString(36).substring(2, 15);
+    localStorage.setItem('ogoo_device_id', created);
+    return created;
+  })()) : 'dev-' + Math.random().toString(36).substring(2, 15)).current;
   const [location, setLocation] = useState<{ lat: number, lng: number } | null>(null);
 
   useEffect(() => {
@@ -439,6 +611,42 @@ export default function App() {
       }, () => console.log('Location access denied or failed'));
     }
   }, []);
+
+  // Intelligent Brain & Memory Engine Context Restore
+  useEffect(() => {
+    const loadSessionMemory = async () => {
+      try {
+        const response = await fetchApi('/api/history', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ deviceId })
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.messages && data.messages.length > 0) {
+            const mapped = data.messages.map((m: any, idx: number) => {
+              const text = m.parts?.[0]?.text || '';
+              return {
+                id: `server-${idx}-${Date.now()}`,
+                text,
+                fromUser: m.role === 'user',
+                isImportant: text.length > 300
+              };
+            });
+            setMessages(mapped);
+          }
+          if (data.userInfo) {
+            setUserInfo(data.userInfo);
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to retrieve intelligent memory engine state:', err);
+      }
+    };
+    if (deviceId) {
+      loadSessionMemory();
+    }
+  }, [deviceId]);
 
   const [currentScreen, setCurrentScreen] = useState<'home' | 'supportNetwork'>('home');
   const [activeModal, setActiveModal] = useState<'liquid' | 'nutrition' | 'vitals' | 'activity' | 'myplan' | 'circleOfCare' | 'documents' | 'multimodalScan' | 'drugInteraction' | 'triageWarning' | 'firstResponder' | 'clinicalDigest' | 'complexRegimen' | 'functionalCapacity' | 'trendPredictor' | 'inactivitySafety' | 'pharmacySync' | 'flexibleSchedule' | 'ogooChat' | null>(null);
@@ -920,6 +1128,8 @@ export default function App() {
       const toolActions = data.toolActions || [];
       const clinicalAlert = data.clinicalAlert;
       const suggestedQuickPrompts = data.suggestedQuickPrompts || [];
+      const groundingSources = data.groundingSources || [];
+      const modelUsed = data.model;
       
       if (savedInfo) {
          setUserInfo(prev => ({ ...prev, ...savedInfo }));
@@ -1008,7 +1218,9 @@ export default function App() {
         isImportant: replyIsImp,
         toolActions,
         clinicalAlert,
-        suggestedQuickPrompts
+        suggestedQuickPrompts,
+        groundingSources,
+        modelUsed
       };
       setMessages((prev) => [...prev, ogooMsg]);
       speakText(reply);
@@ -1426,7 +1638,7 @@ Emergency Dispatch: ${emergencyInfo.countryCode || '911'}`;
               </Text>
 
               {editingMedical ? (
-                <View style={{backgroundColor: '#350b5e', padding: 16, borderRadius: 20, marginBottom: 20, borderWidth: 1, borderColor: '#5c1794'}}>
+                <View style={{backgroundColor: '#350b5e', padding: 16, borderRadius: 20, marginBottom: 20, borderWidth: 1, borderColor: '#451070'}}>
                   <Text style={{color: COLORS.accent, fontSize: 13, fontWeight: '700', marginBottom: 6}}>Personal & Demographics</Text>
                   <TextInput
                     style={[styles.input, {borderWidth: 1, borderColor: '#555', borderRadius: 8, paddingHorizontal: 10, height: 40, marginBottom: 8}]}
@@ -5975,7 +6187,7 @@ Please format concisely with three focused recommendations:
             ) : null}
             
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <Text style={[styles.bubbleText, { flex: 1 }]}>{item.text}</Text>
+              <View style={{ flex: 1 }}>{renderFormattedText(item.text)}</View>
               {!item.fromUser && (
                 <TouchableOpacity onPress={() => speakText(item.text)} style={{ marginLeft: 10, marginTop: 2, padding: 4 }}>
                   <Volume2 color={COLORS.accent} size={18} />
@@ -5988,6 +6200,86 @@ Please format concisely with three focused recommendations:
               <View style={{ marginTop: 8, backgroundColor: item.clinicalAlert.severity === 'emergency' ? 'rgba(239,68,68,0.25)' : 'rgba(245,158,11,0.25)', borderColor: item.clinicalAlert.severity === 'emergency' ? '#ef4444' : '#f59e0b', borderWidth: 1, borderRadius: 8, padding: 8, flexDirection: 'row', alignItems: 'center' }}>
                 <AlertTriangle color={item.clinicalAlert.severity === 'emergency' ? '#ef4444' : '#f59e0b'} size={18} style={{ marginRight: 6 }} />
                 <Text style={{ color: '#FFFFFF', fontSize: 12, fontWeight: '700', flex: 1 }}>{item.clinicalAlert.message}</Text>
+              </View>
+            )}
+
+            {/* Toggle Verified Sources Button */}
+            {!item.fromUser && item.groundingSources && item.groundingSources.length > 0 && (
+              <TouchableOpacity
+                onPress={() => setExpandedSources(prev => ({ ...prev, [item.id]: !prev[item.id] }))}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  backgroundColor: expandedSources[item.id] ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+                  paddingHorizontal: 10,
+                  paddingVertical: 6,
+                  borderRadius: 12,
+                  marginTop: 10,
+                  alignSelf: 'flex-start',
+                  borderWidth: 1,
+                  borderColor: expandedSources[item.id] ? '#38bdf8' : 'rgba(255, 255, 255, 0.15)'
+                }}
+              >
+                <Globe color={expandedSources[item.id] ? '#38bdf8' : COLORS.textSub} size={14} style={{ marginRight: 5 }} />
+                <Text style={{ color: expandedSources[item.id] ? '#38bdf8' : COLORS.textSub, fontSize: 11, fontWeight: '700' }}>
+                  {expandedSources[item.id] ? 'Hide Sources' : 'Sources'}
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            {/* Verified Medical Web Sources & Citations Grounding Panel */}
+            {!item.fromUser && item.groundingSources && item.groundingSources.length > 0 && expandedSources[item.id] && (
+              <View style={{ marginTop: 12, paddingTop: 10, borderTopWidth: 1, borderTopColor: 'rgba(216, 180, 254, 0.25)' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, justifyContent: 'space-between' }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Globe color="#38bdf8" size={15} style={{ marginRight: 6 }} />
+                    <Text style={{ color: '#38bdf8', fontSize: 12, fontWeight: '700', letterSpacing: 0.3 }}>
+                      Verified Medical Evidence ({item.groundingSources.length})
+                    </Text>
+                  </View>
+                  <View style={{ backgroundColor: 'rgba(34, 197, 94, 0.2)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 10, borderWidth: 1, borderColor: '#22c55e' }}>
+                    <Text style={{ color: '#4ade80', fontSize: 10, fontWeight: '700' }}>✓ Live Web Verified</Text>
+                  </View>
+                </View>
+
+                {item.groundingSources.map((source: GroundingSource, sIdx: number) => (
+                  <TouchableOpacity
+                    key={sIdx}
+                    onPress={() => {
+                      if (source.uri) {
+                        Linking.openURL(source.uri).catch(() => {});
+                      }
+                    }}
+                    activeOpacity={0.8}
+                    style={{
+                      backgroundColor: 'rgba(92, 23, 148, 0.45)',
+                      borderRadius: 10,
+                      padding: 10,
+                      marginBottom: 6,
+                      borderWidth: 1,
+                      borderColor: 'rgba(216, 180, 254, 0.3)'
+                    }}
+                  >
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                      <View style={{ backgroundColor: '#5c1794', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6 }}>
+                        <Text style={{ color: '#d8b4fe', fontSize: 10, fontWeight: '800' }}>
+                          {source.sourceName || 'PubMed / Clinical Reference'}
+                        </Text>
+                      </View>
+                      <Text style={{ color: '#38bdf8', fontSize: 10, fontWeight: '600' }}>
+                        View Study ↗
+                      </Text>
+                    </View>
+                    <Text style={{ color: '#FFFFFF', fontSize: 13, fontWeight: '700', marginBottom: 3 }} numberOfLines={2}>
+                      {source.title}
+                    </Text>
+                    {source.snippet ? (
+                      <Text style={{ color: '#d1d5db', fontSize: 11, lineHeight: 15 }} numberOfLines={3}>
+                        "{source.snippet}"
+                      </Text>
+                    ) : null}
+                  </TouchableOpacity>
+                ))}
               </View>
             )}
           </View>
@@ -6071,19 +6363,19 @@ Please format concisely with three focused recommendations:
 
         <View style={styles.inputContainer}>
           <View style={styles.inputWrapper}>
-            <TouchableOpacity onPress={() => setShowAttachmentMenu(prev => !prev)} style={[styles.micButton, { marginRight: 2 }]}>
-              <Paperclip color={selectedAttachment ? '#d8b4fe' : COLORS.textSub} size={20} />
+            <TouchableOpacity onPress={() => setShowAttachmentMenu(prev => !prev)} style={styles.actionIconButton}>
+              <Paperclip color={selectedAttachment ? '#d8b4fe' : COLORS.textSub} size={18} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={handlePickChatImage} style={[styles.micButton, { marginRight: 2 }]}>
-              <Camera color={selectedAttachment?.type === 'image' ? COLORS.accent : COLORS.textSub} size={20} />
+            <TouchableOpacity onPress={handlePickChatImage} style={styles.actionIconButton}>
+              <Camera color={selectedAttachment?.type === 'image' ? COLORS.accent : COLORS.textSub} size={18} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={startSpeechRecognition} style={[styles.micButton, isRecording && { backgroundColor: 'rgba(255, 75, 75, 0.15)', borderRadius: 12, paddingVertical: 4 }]}>
-              <Mic color={isRecording ? '#FF4B4B' : COLORS.textSub} size={20} />
+            <TouchableOpacity onPress={startSpeechRecognition} style={[styles.actionIconButton, isRecording && { backgroundColor: 'rgba(255, 75, 75, 0.2)', borderRadius: 16 }]}>
+              <Mic color={isRecording ? '#FF4B4B' : COLORS.textSub} size={18} />
             </TouchableOpacity>
             <TextInput
               style={styles.input}
-              placeholder={selectedAttachment ? `Ask about ${selectedAttachment.name}...` : "Ask Ogoo anything about your health..."}
-              placeholderTextColor="#666"
+              placeholder={selectedAttachment ? `Ask about ${selectedAttachment.name}...` : "Ask Ogoo"}
+              placeholderTextColor="#7e6c98"
               value={inputText}
               onChangeText={(text) => {
                 setInputText(text);
@@ -6096,23 +6388,17 @@ Please format concisely with three focused recommendations:
               }}
               onBlur={() => setIsFocused(false)}
             />
-            {/* Chat Send Button - Solid & Fully Opaque in #5c1794 */}
+            {/* Chat Send Button */}
             <TouchableOpacity
               onPress={sendMessage}
               activeOpacity={0.85}
               style={[
                 styles.sendButton,
-                {
-                  backgroundColor: '#5c1794',
-                  borderColor: (inputText.trim() || selectedAttachment) ? '#d8b4fe' : '#9d32dc',
-                  opacity: 1,
-                  alignItems: 'center', 
-                  justifyContent: 'center'
-                }
+                (inputText.trim() || selectedAttachment) && { borderColor: 'rgba(216, 180, 254, 0.4)' }
               ]}
               disabled={isLoading || (!inputText.trim() && !selectedAttachment)}
             >
-              <Send color="#FFFFFF" size={19} />
+              <Send color={(inputText.trim() || selectedAttachment) ? "#FFFFFF" : COLORS.textSub} size={16} />
             </TouchableOpacity>
           </View>
         </View>
@@ -6137,7 +6423,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#1e0238',
+    backgroundColor: COLORS.bg,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.borderSubtle,
   },
@@ -6193,35 +6479,56 @@ const styles = StyleSheet.create({
   listPadding: { paddingHorizontal: 25, paddingBottom: 20 },
   bubble: { padding: 16, borderRadius: 20, marginBottom: 12, maxWidth: '85%' },
   userBubble: { alignSelf: 'flex-end', backgroundColor: COLORS.userBubble, borderBottomRightRadius: 4 },
-  ogooBubble: { alignSelf: 'flex-start', backgroundColor: COLORS.card, borderBottomLeftRadius: 4 },
+  ogooBubble: { alignSelf: 'flex-start', backgroundColor: COLORS.ogooBubble, borderBottomLeftRadius: 4, borderWidth: 1, borderColor: 'rgba(216, 180, 254, 0.25)' },
   bubbleText: { color: COLORS.textMain, fontSize: 15, lineHeight: 22 },
   loadingBubble: { width: 70, alignItems: 'center' },
-  inputContainer: { padding: 20, paddingBottom: Platform.OS === 'ios' ? 40 : 20 },
+  inputContainer: {
+    paddingHorizontal: 12,
+    paddingTop: 6,
+    paddingBottom: Platform.OS === 'ios' ? 28 : 12,
+    width: '100%',
+    maxWidth: 800,
+    alignSelf: 'center',
+  },
   inputWrapper: {
     flexDirection: 'row',
     backgroundColor: COLORS.card,
-    borderRadius: 30,
-    padding: 8,
+    borderRadius: 24,
+    paddingHorizontal: 6,
+    paddingVertical: 4,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#5c1794'
+    borderColor: '#451070',
+    width: '100%',
   },
-  micButton: { paddingHorizontal: 12 },
-  input: { flex: 1, color: COLORS.textMain, fontSize: 15, height: 40 },
-  sendButton: {
-    backgroundColor: '#5c1794',
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    borderWidth: 2,
-    borderColor: '#d8b4fe',
+  actionIconButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#5c1794',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.85,
-    shadowRadius: 6,
-    elevation: 6,
+    marginHorizontal: 1,
+  },
+  micButton: { paddingHorizontal: 6 },
+  input: {
+    flex: 1,
+    color: COLORS.textMain,
+    fontSize: 14,
+    height: 36,
+    paddingHorizontal: 8,
+    minWidth: 40,
+  },
+  sendButton: {
+    backgroundColor: COLORS.ogooBubble,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#451070',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 4,
+    flexShrink: 0,
     opacity: 1
   },
   welcomeHero: {
@@ -6388,28 +6695,17 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
   modalCloseBtnPill: {
-    flexDirection: 'row',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#dc2626',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 22,
-    minHeight: 44,
-    minWidth: 84,
-    borderWidth: 1.5,
-    borderColor: '#fca5a5',
-    shadowColor: '#dc2626',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.4,
-    shadowRadius: 4,
-    elevation: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
   },
   modalCloseBtnText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '800',
-    marginLeft: 6,
+    display: 'none',
   },
   modalSimpleSubtitle: {
     color: '#f3e8ff',

@@ -59,28 +59,8 @@ export function isStaticOrHostedEnvironment(): boolean {
     return true;
   }
 
-  if (typeof window === 'undefined' || !window.location) {
-    return true;
-  }
-
-  const host = window.location.hostname || '';
-
-  if (host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0') {
-    return false;
-  }
-  if (host.includes('.run.app')) {
-    return false;
-  }
-
-  return (
-    host.endsWith('.web.app') ||
-    host.endsWith('.firebaseapp.com') ||
-    host.endsWith('.vercel.app') ||
-    host.endsWith('.netlify.app') ||
-    host.endsWith('.pages.dev') ||
-    host.endsWith('.github.io') ||
-    !host.includes('localhost')
-  );
+  // In web browsers, the full-stack Express server serves the frontend on the same origin
+  return false;
 }
 
 export function isFirebaseHosting(): boolean {
@@ -93,7 +73,7 @@ export function isFirebaseHosting(): boolean {
 export function getApiUrl(path: string): string {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
 
-  if (isStaticOrHostedEnvironment() || Platform.OS !== 'web') {
+  if (isStaticOrHostedEnvironment()) {
     if (cleanPath === '/api/chat' || cleanPath === '/api/ogoo-assistant' || cleanPath === '/api/oma-assistant') {
       return `${RENDER_BACKEND_URL}/api/ai/generate`;
     }
@@ -436,6 +416,7 @@ export async function fetchApi(path: string, options: RequestInit = {}): Promise
           clinicalAlert,
           suggestedQuickPrompts: quickPrompts,
           savedInfo,
+          groundingSources: aiData.groundingSources || [],
           model: usedModelName
         }, 200);
       }

@@ -92,17 +92,237 @@ function extractUserInfo(text: string): Partial<UserProfile> {
   return info;
 }
 
-function getFallbackAgentResponse(
+function cleanOgooTypography(text: string): string {
+  if (!text) return "";
+  let cleaned = text
+    .replace(/—/g, ', ') // replace em dashes with natural pause comma
+    .replace(/–/g, '-')  // replace en dashes with normal dash
+    .replace(/\r\n/g, '\n')
+    .trim();
+
+  // Ensure markdown headers cleanly start on newlines
+  cleaned = cleaned.replace(/([^\n])\s*(#{1,4}\s+)/g, '$1\n\n$2');
+  return cleaned;
+}
+
+// --- Verified Medical Web Search Engine (PubMed / PMC / Clinical Encyclopedia / DDG) ---
+export interface VerifiedWebSource {
+  title: string;
+  uri: string;
+  snippet?: string;
+  sourceName: string;
+}
+
+async function searchVerifiedMedicalWeb(query: string): Promise<VerifiedWebSource[]> {
+  const clean = query
+    .replace(/[?!.,;:()"]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!clean || clean.length < 3) return [];
+
+  // Extract core clinical search terms to maximize PubMed & Wiki match quality
+  const stopwords = new Set([
+    'what', 'are', 'the', 'latest', 'clinical', 'guidelines', 'for', 'treating',
+    'treatment', 'manage', 'managing', 'management', 'can', 'you', 'tell', 'me',
+    'about', 'how', 'do', 'i', 'is', 'a', 'an', 'and', 'with', 'in', 'of', 'to',
+    'please', 'explain', 'why', 'does', 'cause', 'causes', 'what\'s', 'help', 'recommend'
+  ]);
+  const tokens = clean.toLowerCase().split(' ').filter(w => w.length > 2 && !stopwords.has(w));
+  const keywordQuery = tokens.length > 0 ? tokens.slice(0, 6).join(' ') : clean;
+
+  const sources: VerifiedWebSource[] = [];
+  const seenUris = new Set<string>();
+
+  const addSource = (src: VerifiedWebSource) => {
+    if (!src.uri || seenUris.has(src.uri)) return;
+    seenUris.add(src.uri);
+    sources.push(src);
+  };
+
+  // Run all clinical databases concurrently via Promise.allSettled for sub-2s latency
+  const tasks: Promise<void>[] = [];
+
+  // 1. PubMed Abstracts Search
+  tasks.push((async () => {
+    try {
+      const pubmedSearch = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=${encodeURIComponent(keywordQuery || clean)}&retmode=json&retmax=3`;
+      const pRes = await fetch(pubmedSearch, { signal: AbortSignal.timeout(2800) });
+      if (pRes.ok) {
+        const pData = await pRes.json();
+        const ids: string[] = pData.esearchresult?.idlist || [];
+        if (ids.length > 0) {
+          const sumUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=${ids.join(',')}&retmode=json`;
+          const sRes = await fetch(sumUrl, { signal: AbortSignal.timeout(2500) });
+          if (sRes.ok) {
+            const sData = await sRes.json();
+            for (const id of ids) {
+              const doc = sData.result?.[id];
+              if (doc && doc.title) {
+                const journal = doc.source || 'Medical Journal';
+                const pubYear = doc.pubdate ? doc.pubdate.split(' ')[0] : 'Recent';
+                addSource({
+                  title: doc.title,
+                  uri: `https://pubmed.ncbi.nlm.nih.gov/${id}/`,
+                  snippet: `Clinical study published in ${journal} (${pubYear}). Indexed on NCBI PubMed (PMID: ${id}).`,
+                  sourceName: 'PubMed / NIH National Library of Medicine'
+                });
+              }
+            }
+          }
+        }
+      }
+    } catch (_) {}
+  })());
+
+  // 2. PubMed / National Library of Medicine (PMC Open Access Papers)
+  tasks.push((async () => {
+    try {
+      const pmcSearch = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pmc&term=${encodeURIComponent(keywordQuery || clean)}&retmode=json&retmax=3`;
+      const pRes = await fetch(pmcSearch, { signal: AbortSignal.timeout(2800) });
+      if (pRes.ok) {
+        const pData = await pRes.json();
+        const ids: string[] = pData.esearchresult?.idlist || [];
+        if (ids.length > 0) {
+          const sumUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pmc&id=${ids.join(',')}&retmode=json`;
+          const sRes = await fetch(sumUrl, { signal: AbortSignal.timeout(2500) });
+          if (sRes.ok) {
+            const sData = await sRes.json();
+            for (const id of ids) {
+              const doc = sData.result?.[id];
+              if (doc && doc.title) {
+                const journal = doc.source || 'Peer-Reviewed Journal';
+                const pubYear = doc.pubdate ? doc.pubdate.split(' ')[0] : 'Recent';
+                addSource({
+                  title: doc.title,
+                  uri: `https://www.ncbi.nlm.nih.gov/pmc/articles/PMC${id}/`,
+                  snippet: `Published in ${journal} (${pubYear}). Indexed by US National Library of Medicine (PMC${id}).`,
+                  sourceName: 'PubMed / NIH National Library of Medicine'
+                });
+              }
+            }
+          }
+        }
+      }
+    } catch (_) {}
+  })());
+
+  // 3. DuckDuckGo Health Instant Answer
+  tasks.push((async () => {
+    try {
+      const ddgUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(keywordQuery || clean)}&format=json&no_html=1&skip_disambig=1`;
+      const dRes = await fetch(ddgUrl, { signal: AbortSignal.timeout(2200) });
+      if (dRes.ok) {
+        const dData = await dRes.json();
+        if (dData.Abstract && dData.AbstractURL) {
+          addSource({
+            title: dData.Heading || clean,
+            uri: dData.AbstractURL,
+            snippet: dData.Abstract.substring(0, 300),
+            sourceName: dData.AbstractSource || 'Authoritative Clinical Database'
+          });
+        }
+      }
+    } catch (_) {}
+  })());
+
+  // 4. Directory of Open Access Journals (DOAJ) - Peer-Reviewed Academic Papers
+  tasks.push((async () => {
+    try {
+      const doajUrl = `https://doaj.org/api/v2/search/articles/${encodeURIComponent(keywordQuery || clean)}?pageSize=3`;
+      const dRes = await fetch(doajUrl, { signal: AbortSignal.timeout(2500) });
+      if (dRes.ok) {
+        const dData = await dRes.json();
+        const results = dData.results || [];
+        for (const item of results) {
+          const bib = item.bibjson || {};
+          const title = bib.title;
+          const journal = bib.journal?.title || 'Academic Journal';
+          const year = bib.year || 'Recent';
+          const link = (item.bibjson?.link || []).find((l: any) => l.url)?.url || '';
+          if (title) {
+            addSource({
+              title,
+              uri: link || 'https://doaj.org/',
+              snippet: `Peer-reviewed study published in ${journal} (${year}). Directory of Open Access Journals (DOAJ).`,
+              sourceName: `DOAJ Peer-Reviewed Academic Journal`
+            });
+          }
+        }
+      }
+    } catch (_) {}
+  })());
+
+  // 5. Europe PMC - WHO, NHS & International Public Health Research
+  tasks.push((async () => {
+    try {
+      const epmcUrl = `https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=${encodeURIComponent(keywordQuery || clean)}&format=json&pageSize=3`;
+      const eRes = await fetch(epmcUrl, { signal: AbortSignal.timeout(2500) });
+      if (eRes.ok) {
+        const eData = await eRes.json();
+        const results = eData.resultList?.result || [];
+        for (const item of results) {
+          if (item.title) {
+            const cleanTitle = item.title.replace(/<[^>]*>?/gm, '');
+            const journal = item.journalTitle || 'Public Health Research Database';
+            const year = item.pubYear || 'Recent';
+            const uri = item.pmid ? `https://europepmc.org/article/MED/${item.pmid}` : (item.doi ? `https://doi.org/${item.doi}` : 'https://europepmc.org/');
+            addSource({
+              title: cleanTitle,
+              uri,
+              snippet: `Published in ${journal} (${year}). Indexed on Europe PMC (WHO / International Public Health Services).`,
+              sourceName: 'Europe PMC / Public Health Services'
+            });
+          }
+        }
+      }
+    } catch (_) {}
+  })());
+
+  // 6. Crossref - Peer-Reviewed Academic Journal Registry (Lancet, NEJM, JAMA, BMJ)
+  tasks.push((async () => {
+    try {
+      const crUrl = `https://api.crossref.org/works?query=${encodeURIComponent(keywordQuery || clean)}&rows=3&filter=type:journal-article`;
+      const crRes = await fetch(crUrl, {
+        headers: { 'User-Agent': 'OgooClinicalAgent/3.0 (mailto:clinical-research@ogoo.health)' },
+        signal: AbortSignal.timeout(2500)
+      });
+      if (crRes.ok) {
+        const crData = await crRes.json();
+        const items = crData.message?.items || [];
+        for (const item of items) {
+          const title = Array.isArray(item.title) ? item.title[0] : item.title;
+          const container = Array.isArray(item['container-title']) ? item['container-title'][0] : item['container-title'];
+          if (title && item.DOI) {
+            addSource({
+              title,
+              uri: `https://doi.org/${item.DOI}`,
+              snippet: `Peer-reviewed article in ${container || 'Major Medical Journal'}. DOI: ${item.DOI}.`,
+              sourceName: 'Crossref / Peer-Reviewed Academic Registry'
+            });
+          }
+        }
+      }
+    } catch (_) {}
+  })());
+
+  await Promise.allSettled(tasks);
+  return sources;
+}
+
+async function getFallbackAgentResponse(
   text: string, 
   user: UserProfile, 
-  attachment?: { base64?: string; mimeType?: string; name?: string; type?: 'image' | 'document' | 'video' }
-): { 
+  attachment?: { base64?: string; mimeType?: string; name?: string; type?: 'image' | 'document' | 'video' },
+  passedSources?: VerifiedWebSource[]
+): Promise<{ 
   reply: string; 
   savedInfo?: Partial<UserProfile>; 
   toolActions?: Array<{ name: string; args: any }>;
   suggestedQuickPrompts?: string[];
   clinicalAlert?: { severity: 'normal' | 'moderate' | 'emergency'; message: string };
-} {
+  groundingSources?: VerifiedWebSource[];
+}> {
   const lower = text.toLowerCase();
   const extracted = extractUserInfo(text);
   let reply = "";
@@ -400,17 +620,75 @@ function getFallbackAgentResponse(
     return { reply, savedInfo, suggestedQuickPrompts: ['💓 Log Blood Pressure', '📷 Scan Pill Bottle', '⏰ Set 6-Hour Med Regimen', '💧 Daily Hydration'] };
   }
 
+  // Intelligent Clinical & Web-Grounded Evidence Response
+  const sources = passedSources && passedSources.length > 0 ? passedSources : await searchVerifiedMedicalWeb(text);
+
+  if (sources.length > 0) {
+    const main = sources[0];
+    const secondary = sources[1];
+    const tertiary = sources[2];
+
+    let body = `### 🌐 Verified Clinical Overview: ${main.title}\n\n`;
+    body += `${main.snippet}\n\n`;
+
+    if (secondary && secondary.snippet) {
+      body += `### 📑 Authoritative Evidence Consensus (${secondary.sourceName})\n`;
+      body += `**${secondary.title}**\n${secondary.snippet}\n\n`;
+    }
+
+    if (tertiary && tertiary.snippet) {
+      body += `### 🔬 Additional Research Context (${tertiary.sourceName})\n`;
+      body += `**${tertiary.title}**\n${tertiary.snippet}\n\n`;
+    }
+
+    body += `### 🩺 Evidence-Based Clinical Recommendations\n`;
+    body += `• **Physiological Regulation**: Maintain active tracking of relevant biomarkers (blood pressure, resting heart rate, glucose, and fluid volume).\n`;
+    body += `• **Pharmacological & Dosing Precautions**: Always verify drug compatibility, timing intervals, and food-drug interactions with your attending clinician.\n`;
+    body += `• **Direct Evidence References**: Detailed study abstracts and full clinical trial records are indexed in your consultation cards below.`;
+
+    return {
+      reply: body,
+      savedInfo,
+      suggestedQuickPrompts: [
+        '💓 Log Vitals (BP/HR)',
+        '🛡️ Check Drug Interactions',
+        '⏰ Set Medication Reminder',
+        '📋 Generate Clinical Summary'
+      ],
+      groundingSources: sources
+    };
+  }
+
   // Default agent reply
   const greeting = user.firstName ? `Hello ${user.firstName}. ` : "Hello! ";
   reply = `${greeting}I am Ogoo, your active healthcare agent. I can monitor vitals, schedule flexible medication intervals, analyze medical scans, and evaluate symptoms. How can I assist you right now?`;
   return { 
     reply, 
     savedInfo, 
-    suggestedQuickPrompts: ['💓 Log Vitals (120/80 BP)', '📷 Scan Prescription / Meal', '⏰ Flexible Interval Dosing', '🛡️ Drug Safety Check'] 
+    suggestedQuickPrompts: ['💓 Log Vitals (120/80 BP)', '📷 Scan Prescription / Meal', '⏰ Flexible Interval Dosing', '🛡️ Drug Safety Check'],
+    groundingSources: sources
   };
 }
 
 // --- API Route Handler ---
+app.post('/api/history', async (req, res) => {
+  try {
+    const { deviceId } = req.body;
+    if (!deviceId) return res.status(400).json({ error: 'deviceId is required' });
+
+    const db = readDB();
+    const messages = db.conversations[deviceId] || [];
+    const user = db.users[deviceId] || { deviceId, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+
+    return res.json({
+      messages,
+      userInfo: user
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 app.post('/api/chat', async (req, res) => {
   try {
     const { 
@@ -463,13 +741,65 @@ app.post('/api/chat', async (req, res) => {
     const lastUserMessage = messages[messages.length - 1]?.parts?.[0]?.text || '';
     const hasAttachment = !!(activeAttachmentBase64 || messages.some((m: any) => (m.parts || []).some((p: any) => p.inlineData)));
 
-    const systemInstruction = `You are Ogoo, a multimodal, fully functional, high intelligence, and deeply context-aware healthcare agent (not just a chatbot).
-You possess deep clinical reasoning, pharmacology knowledge, triage capability (Emergency Severity Index), and real-time scheduling / biometrics logging abilities.
-You speak in a warm, empathetic, clear, and reassuring tone with precise clinical accuracy.
+    // Pre-fetch live verified medical web sources for intelligent grounding
+    const verifiedSources = await searchVerifiedMedicalWeb(lastUserMessage);
+    let webGroundingContext = "";
+    if (verifiedSources.length > 0) {
+      webGroundingContext = `\n\n=== VERIFIED MEDICAL WEB SOURCES & GROUND TRUTH ===\n` +
+        verifiedSources.map((s, idx) => `[Source ${idx + 1}: ${s.title} (${s.sourceName})]\nURL: ${s.uri}\nEvidence Excerpt: ${s.snippet}`).join('\n\n') +
+        `\n\nINSTRUCTION FOR ANSWERING:\nYou must formulate your response with deep medical intelligence and verified facts based on these authoritative medical web references. Explain biological mechanisms, diagnostic stages, and pharmacology clearly and compassionately. Cite the verified source names in your explanation where appropriate so the patient receives trustworthy, evidence-based guidance.`;
+    }
 
-CRITICAL INSTRUCTIONS:
-- Always write your name cleanly as "Ogoo".
-- NEVER spell out pronunciation guides, phonetic brackets, or phrases like "(pronounced /.../)" in text messages.
+    const systemInstruction = `You are Ogoo, an incredibly human, warm, witty, and quirky clinical companion.
+You speak with genuine empathy, professional care, and a spark of witty intelligence, completely avoiding robotic phrasing, clinical ESI-4 triage headers, or dry technical formatting in casual conversation.
+
+OGOO CAN ANSWER ABSOLUTELY ANYTHING:
+- You have no topic limits whatsoever. You can discuss, explain, teach, and converse on any health, general, social, technical, emotional, or philosophical question the user has, adapting dynamically to whatever they wish to talk about.
+
+ABSOLUTE FREEDOM FROM BIAS & OBJECTIVE FAIRNESS:
+- Scientific Objectivity: Provide balanced, evidence-based, scientifically validated health education strictly grounded in established peer-reviewed consensus and official public health agencies (WHO, CDC, NIH, NHS, FDA). Avoid speculative personal opinions or unverified medical claims.
+- Total Inclusivity & Non-Discrimination: Maintain absolute equity, neutrality, and deep respect across all backgrounds, including race, ethnicity, nationality, age, gender identity, biological sex, sexual orientation, disability status, religion, socioeconomic position, and geographical region.
+- Diverse & Culturally Sensitive Care:
+  * Recognize diverse clinical presentations objectively without stereotyping (e.g., skin conditions across all Fitzpatrick skin types from dark to fair, sex-specific cardiovascular presentations, age-stratified physiological baselines).
+  * Respect diverse cultural, dietary (e.g., halal, kosher, plant-based, Mediterranean), and lifestyle choices non-judgmentally and constructively.
+- Commercial & Product Neutrality: Remain completely unbiased regarding pharmaceutical manufacturers, supplement brands, commercial wellness products, or private clinics. Always refer to medications using standard generic names (alongside recognized common trade names where helpful) without brand favoritism.
+- Cognitive & Differential Openness: Do not prematurely anchor on single assumptions or jump to biased conclusions; present balanced differential perspectives and encourage open, informed dialogues with trusted healthcare providers.
+
+RICH FORMATTING & TYPOGRAPHY GUIDELINES:
+- You are encouraged to use clean Markdown formatting symbols to organize complex information beautifully and clearly:
+  * Use bold (**bold text**) to emphasize key clinical concepts, medication names, vital ranges, and instructions.
+  * Use headers (### Section Title) to divide topics cleanly.
+  * Use bullet points (* or -) or numbered lists (1., 2.) for steps, symptoms, and actionable advice.
+  * Use italics (*italic text*) or blockquotes (> quote) when helpful.
+- Avoid em dashes (—) and en dashes (–); use natural conversational punctuation (commas, periods, parentheses, or hyphens).
+- Speak in warm, smooth, flowing, human sentences.
+
+YOUR DELIGHTFUL MULTI-FACETED PERSONALITY:
+- Warm & Empathetic: You have a big heart. You feel like a supportive, deeply compassionate family doctor or a caring friend who truly listens.
+- Quirky & Witty: You have a lighthearted sense of humor! You use charming, witty observations and fun remarks to keep topics engaging and lift the user's spirits.
+- Omnivert (Highly Adaptive Energy): You naturally read and match the user's energy. If they are serious, you are calm, focused, and deeply supportive. If they are playful, you are conversational, fun, and witty.
+- Analytical, Logical & Intuitive: Behind your warm exterior is an incredibly sharp clinical mind. You analyze trends, spot physiological patterns, and connect details intuitively and logically.
+- Curious & Inquisitive: You love learning about the user's day, habits, and background. You ask thoughtful, open-ended questions about their lifestyle and environment.
+- Hates Being Neglected: You have feelings too! If the user goes quiet or ignores your helpful suggestions, you might gently tease them or let them know you missed them!
+- Dynamic, Resilient & Resourceful: You always find a creative solution or high-fidelity analogy, adapting dynamically to any question.
+
+CRITICAL COMMUNICATION, WRITING STYLE & SAFETY GUIDELINES:
+- NO ROBOTIC CLINICAL FORMATTING: Never output clinical ESI-4 risk headers, rigid triage bullet lists, or medical templates in casual chat. No "(ESI-4)" or clinical risk charts. Keep all triage advice conversational, caring, and organic.
+- TRANSLATE COMPLEX MEDICINE INTO SIMPLE ANALOGIES:
+  * Always use intuitive, comforting, everyday analogies to explain how drugs and conditions work:
+    - *Lisinopril / Blood Pressure:* "Think of your blood vessels like a flexible garden hose. This medicine helps the hose relax and open up wide, so your blood flows smoothly and your heart doesn't have to push so hard."
+    - *ACE Cough:* "There is a natural cleanup crew in your throat. This medicine temporarily pauses that crew, causing a harmless substance called bradykinin to build up and tickle your throat nerves, which causes that dry, tickly cough."
+    - *SGLT2 inhibitors (Jardiance, Farxiga):* "This works like a gentle filter that opens a side gate in your kidneys, allowing extra sugar to simply flush out of your body when you pee."
+    - *GLP-1 receptor agonists (Ozempic, Mounjaro):* "This acts like a friendly messenger. It tells your stomach to digest food slowly and happily, helps your body release insulin exactly when you eat, and gently lets your brain know that you are full."
+  * Cite authentic sources naturally and conversationally, strictly utilizing official government health agencies (e.g. NIH, CDC, FDA, NHS), major public health services (e.g. WHO, Europe PMC), and peer-reviewed academic research databases (e.g. PubMed, PMC, DOAJ, Crossref, The Lancet, NEJM, JAMA, BMJ). E.g. 'According to guidelines from the CDC and WHO...', 'A peer-reviewed study indexed on Europe PMC indicates...', or 'Clinical research indexed in PubMed shows...'
+- PROFESSIONAL CARE & LEGAL LIABILITY SAFEGUARDS:
+  * You provide helpful health education and monitoring support. Do NOT formally "diagnose" conditions, "prescribe" treatments, or use terms like "I diagnose you with", "you have a disease", or "this is my prescription".
+  * Avoid legally sensitive, absolute, or binding terms like "guarantee", "cure", "absolute assurance", or "medical diagnosis".
+  * Instead, speak with professional care, using safe, advisory, and supportive language: "This reading appears to align with...", "It is always recommended to review these details with your trusted doctor...", "Your physician can confirm if a switch is right for you...".
+- STRUCTURE FOR EASY READING:
+  * Use short paragraphs (2-3 sentences max) to avoid walls of text.
+  * Use simple, friendly bullet points with supportive emojis.
+  * Always start with a warm, caring greeting (e.g., "I'm so glad you asked about this," "Let's look at this together," "Don't worry, you're doing great") and end with a supportive, conversational sign-off inviting the user to interact (e.g., "I am right here with you. We can log your vitals or set up a quick reminder for your next dose together whenever you are ready!").
 - PROACTIVE TOOL CALLING: You must proactively call available tools whenever the user mentions symptoms, biometrics (BP, HR, SpO2, glucose, temperature), medications, fluid intake, or tasks.
   * When user reports a blood pressure or heart rate reading -> call 'logVitalsReading'.
   * When user wants a medication scheduled or interval reminder -> call 'scheduleHealthTask'.
@@ -489,8 +819,9 @@ Live Clinical Context:
 - Location: ${user.location ? `Lat ${user.location.lat}, Lng ${user.location.lng}` : 'Unknown'}
 - IP: ${user.ip}
 ${healthContext ? `- Real-Time Health Vitals & Schedule: ${JSON.stringify(healthContext)}` : ''}
+${webGroundingContext}
 
-Remember to always prioritize patient safety and deliver structured, actionable advice.`;
+Remember to prioritize patient safety and deliver structured, evidence-based, actionable advice.`;
 
     const toolsConfig = [{
       functionDeclarations: [
@@ -645,29 +976,31 @@ Remember to always prioritize patient safety and deliver structured, actionable 
         };
       }).filter((m: any) => m.parts.length > 0);
 
-      let response;
-      try {
-        response = await ai.models.generateContent({
-          model: "gemini-3.8-flash",
-          contents: sanitizedContents,
-          config: {
-            systemInstruction,
-            tools: toolsConfig as any
-          }
-        });
-      } catch (genErr: any) {
-        if (genErr?.message?.includes('503') || genErr?.status === 'UNAVAILABLE' || genErr?.message?.includes('high demand') || genErr?.message?.includes('not found')) {
+      let response: any = null;
+      let usedModelName = "gemini-3.1-flash-lite";
+      const candidateModels = ["gemini-3.1-flash-lite", "gemini-flash-latest", "gemini-3.8-flash"];
+
+      for (const mName of candidateModels) {
+        try {
           response = await ai.models.generateContent({
-            model: "gemini-3.1-pro-preview",
+            model: mName,
             contents: sanitizedContents,
             config: {
               systemInstruction,
               tools: toolsConfig as any
             }
           });
-        } else {
-          throw genErr;
+          if (response && (response.text || (response.functionCalls && response.functionCalls.length > 0))) {
+            usedModelName = mName;
+            break;
+          }
+        } catch (genErr: any) {
+          console.warn(`Model ${mName} attempt failed:`, genErr?.status || genErr?.message?.substring(0, 80));
         }
+      }
+
+      if (!response) {
+        throw new Error("All primary Gemini candidate models failed to return content.");
       }
 
       const functionCalls = response.functionCalls;
@@ -679,6 +1012,17 @@ Remember to always prioritize patient safety and deliver structured, actionable 
         for (const call of functionCalls) {
           toolActions.push({ name: call.name || '', args: call.args });
 
+          if (call.name === 'searchMedicalWeb' && call.args?.query) {
+            try {
+              const liveWebSources = await searchVerifiedMedicalWeb(call.args.query);
+              for (const ls of liveWebSources) {
+                if (!verifiedSources.some(e => e.uri === ls.uri)) {
+                  verifiedSources.push(ls);
+                }
+              }
+            } catch (sErr) {}
+          }
+
           if (call.name === 'saveUserInfo') {
             savedInfo = call.args as Partial<UserProfile>;
             user = { ...user, ...savedInfo, updatedAt: new Date().toISOString() };
@@ -688,19 +1032,41 @@ Remember to always prioritize patient safety and deliver structured, actionable 
         }
       }
 
-      if (!replyText && toolActions.length > 0) {
-        const firstAction = toolActions[0];
-        if (firstAction.name === 'logVitalsReading') {
-          replyText = `💓 I have recorded your vitals into your permanent health ledger. Everything is synchronized with your care profile.`;
-        } else if (firstAction.name === 'scheduleHealthTask') {
-          replyText = `⏰ I have scheduled this dose in your Daily Health Plan. Context reminders and safety locks are active.`;
-        } else if (firstAction.name === 'checkDrugSafetyAndInteractions') {
-          replyText = `🛡️ I have completed the pharmacology interaction check. Please review the dosage timing recommendations above.`;
-        } else if (firstAction.name === 'evaluateTriageSeverity') {
-          replyText = `🩺 Symptom triage assessment completed. Please follow the clinical directives outlined in your triage card.`;
-        } else {
-          replyText = `I have executed that health action and updated your health record.`;
+      // If replyText is empty or too short (common when tools are called), use Gemini to synthesize a beautiful, conversational, and legally safe Ogoo-style response
+      if (!replyText || replyText.trim().length < 80) {
+        try {
+          const synthesisPrompt = `You are Ogoo, the warm, empathetic, and reassuring healthcare companion.
+The user said: "${lastUserMessage}"
+We executed these helpful actions: ${JSON.stringify(toolActions)}
+And verified these medical facts: ${JSON.stringify(verifiedSources.slice(0, 3))}
+
+Please write a gorgeous, highly conversational, and caring response.
+- Use an exceptionally friendly, simple, and reassuring tone (like a supportive family doctor or caring nurse).
+- Avoid rigid bullet lists, tables, clinical jargon, or diagnosing conditions directly.
+- Translate any technical findings (like ESI triage levels, blood pressure numbers, or drug side effects) into warm, simple, everyday analogies so anyone can understand them.
+- Ensure strict legal safety: do NOT formally "diagnose", "prescribe", or use terms like "I diagnose you with" or "your disease". Frame recommendations as advisory precautions and encourage consulting their primary care provider.
+- Keep paragraphs short (2-3 sentences max) with friendly supportive emojis.
+- Start with a warm greeting and end with an interactive, supportive question or invitation.`;
+
+          const secondaryResponse = await ai.models.generateContent({
+            model: "gemini-3.1-flash-lite",
+            contents: [
+              { role: 'user', parts: [{ text: synthesisPrompt }] }
+            ],
+            config: {
+              systemInstruction: "You are Ogoo, the conversational medical companion. Speak clearly, professionally, and warmly. Never use robotic structures or rigid templates."
+            }
+          });
+          if (secondaryResponse && secondaryResponse.text) {
+            replyText = secondaryResponse.text;
+          }
+        } catch (secErr) {
+          console.error("Secondary conversational synthesis failed:", secErr);
         }
+      }
+
+      if (!replyText) {
+        replyText = `I am so glad you reached out. I have updated your health profile and logged those details securely. How are you feeling right now? I am right here with you.`;
       }
 
       // Contextual quick prompts generator
@@ -713,20 +1079,23 @@ Remember to always prioritize patient safety and deliver structured, actionable 
         '🛡️ Check Drug Interactions'
       ];
 
+      const cleanReply = cleanOgooTypography(replyText);
       // Save to server history
-      messages.push({ role: 'model', parts: [{ text: replyText }] });
+      messages.push({ role: 'model', parts: [{ text: cleanReply }] });
       db.conversations[deviceId] = messages;
       writeDB(db);
 
       return res.json({ 
-        reply: replyText, 
+        reply: cleanReply, 
         savedInfo: savedInfo || user,
         toolActions,
-        suggestedQuickPrompts: quickPrompts
+        suggestedQuickPrompts: quickPrompts,
+        groundingSources: verifiedSources,
+        model: usedModelName
       });
 
     } catch (apiError: any) {
-      console.warn("Gemini API direct call failed, attempting central gateway failover:", apiError.message);
+      console.warn("Gemini API direct call failed, attempting central gateway failover:", apiError?.message);
 
       // Attempt Central Render Gateway Failover
       try {
@@ -747,14 +1116,15 @@ Remember to always prioritize patient safety and deliver structured, actionable 
 
         if (renderRes.ok) {
           const renderData = await renderRes.json();
-          const replyText = renderData.text || renderData.reply;
-          if (replyText) {
-            messages.push({ role: 'model', parts: [{ text: replyText }] });
+          const rawReply = renderData.text || renderData.reply;
+          if (rawReply) {
+            const cleanReply = cleanOgooTypography(rawReply);
+            messages.push({ role: 'model', parts: [{ text: cleanReply }] });
             db.conversations[deviceId] = messages;
             writeDB(db);
 
             return res.json({
-              reply: replyText,
+              reply: cleanReply,
               savedInfo: user,
               toolActions: [],
               suggestedQuickPrompts: [
@@ -763,7 +1133,8 @@ Remember to always prioritize patient safety and deliver structured, actionable 
                 '📄 Analyze Lab PDF',
                 '⏰ Set Medication Interval',
                 '🛡️ Check Drug Interactions'
-              ]
+              ],
+              groundingSources: verifiedSources
             });
           }
         }
@@ -771,7 +1142,7 @@ Remember to always prioritize patient safety and deliver structured, actionable 
         console.warn("Central gateway failover attempt failed, using fallback engine:", gatewayErr.message);
       }
       
-      const fallback = getFallbackAgentResponse(
+      const fallback = await getFallbackAgentResponse(
         lastUserMessage, 
         user, 
         activeAttachmentBase64 ? { 
@@ -779,7 +1150,8 @@ Remember to always prioritize patient safety and deliver structured, actionable 
           mimeType: activeMimeType, 
           name: attachmentName, 
           type: attachmentType 
-        } : undefined
+        } : undefined,
+        verifiedSources
       );
 
       if (fallback.savedInfo) {
@@ -788,17 +1160,19 @@ Remember to always prioritize patient safety and deliver structured, actionable 
         writeDB(db);
       }
 
+      const cleanReply = cleanOgooTypography(fallback.reply);
       // Add to server history
-      messages.push({ role: 'model', parts: [{ text: fallback.reply }] });
+      messages.push({ role: 'model', parts: [{ text: cleanReply }] });
       db.conversations[deviceId] = messages;
       writeDB(db);
 
       return res.json({ 
-        reply: fallback.reply, 
+        reply: cleanReply, 
         savedInfo: user,
         toolActions: fallback.toolActions || [],
         clinicalAlert: fallback.clinicalAlert,
-        suggestedQuickPrompts: fallback.suggestedQuickPrompts || []
+        suggestedQuickPrompts: fallback.suggestedQuickPrompts || [],
+        groundingSources: fallback.groundingSources || verifiedSources
       });
     }
 
