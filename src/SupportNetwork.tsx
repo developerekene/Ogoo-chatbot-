@@ -47,7 +47,12 @@ import {
   ChevronRight,
   RefreshCcw,
   FileText,
-  MessageSquare
+  MessageSquare,
+  Briefcase,
+  MapPin,
+  CreditCard,
+  Phone,
+  ShieldAlert
 } from 'lucide-react-native';
 import {
   SupportMessagingView,
@@ -157,6 +162,196 @@ export interface SupportPeer {
   isConnected: boolean;
   mutualInterests: string[];
 }
+
+export interface CareService {
+  id: string;
+  name: string;
+  title: string;
+  agency?: string;
+  category: 'nursing' | 'caregiver' | 'therapy' | 'nutrition' | 'mental_health' | 'transport' | 'respite' | 'phlebotomy';
+  categoryLabel: string;
+  rating: number;
+  reviewCount: number;
+  hourlyRate: string;
+  location: string;
+  serviceRadius: string;
+  insuranceAccepted: string[];
+  verified: boolean;
+  backgroundChecked: boolean;
+  availability: string;
+  specialties: string[];
+  bio: string;
+  avatarText: string;
+  phone?: string;
+}
+
+export interface CareBooking {
+  id: string;
+  serviceId: string;
+  providerName: string;
+  serviceTitle: string;
+  serviceCategory: string;
+  patientName: string;
+  patientPhone: string;
+  address: string;
+  preferredDate: string;
+  preferredTimeSlot: string;
+  careNotes: string;
+  paymentMethod: 'Insurance' | 'Self-Pay / Card';
+  insuranceProvider?: string;
+  status: 'Pending Confirmation' | 'Confirmed' | 'In Progress' | 'Completed' | 'Cancelled';
+  createdAt: number;
+}
+
+export const DEFAULT_CARE_SERVICES: CareService[] = [
+  {
+    id: 'cs1',
+    name: 'Nurse Evelyn Wright, BSN, RN, CWCN',
+    title: 'Certified Wound Care & Mobile Infusion Nurse',
+    agency: 'Horizon Clinical Home Health',
+    category: 'nursing',
+    categoryLabel: '🩺 In-Home Clinical Nursing',
+    rating: 4.9,
+    reviewCount: 76,
+    hourlyRate: '$65 / hr • $95 / visit',
+    location: 'Metro Boston & Suburbs',
+    serviceRadius: '30-mile coverage',
+    insuranceAccepted: ['Medicare', 'BlueCross', 'Aetna', 'Self-Pay'],
+    verified: true,
+    backgroundChecked: true,
+    availability: 'Available Today • 24/7 On-Call',
+    specialties: ['Post-Op Surgical Wound Care', 'IV Infusion Therapy', 'Vitals & Diabetic Foot Care'],
+    bio: 'Over 14 years acute clinical experience. Specializing in home sterile dressing changes, PICC line maintenance, and medication administration.',
+    avatarText: 'EW',
+    phone: '+1 (617) 555-0192'
+  },
+  {
+    id: 'cs2',
+    name: 'Marcus Sterling, CNA, PCA',
+    title: 'Lead Patient Care Assistant & Mobility Escort',
+    agency: 'Empower Home Caregivers',
+    category: 'caregiver',
+    categoryLabel: '🧑‍🦼 Caregiver & Home Health Aide',
+    rating: 5.0,
+    reviewCount: 112,
+    hourlyRate: '$34 / hr',
+    location: 'Greater Boston Area',
+    serviceRadius: '25-mile coverage',
+    insuranceAccepted: ['Medicaid', 'MassHealth', 'Long-Term Care Ins', 'Self-Pay'],
+    verified: true,
+    backgroundChecked: true,
+    availability: 'Immediate • Weekday Mornings & Evenings',
+    specialties: ['ADL Assistance', 'Fall Prevention', 'Safe Transfers', 'Bed Bathing & Grooming'],
+    bio: 'Certified Patient Care Assistant dedicated to respectful, dignified personal care, safe wheelchair/bed transfers, and medication reminders.',
+    avatarText: 'MS',
+    phone: '+1 (617) 555-0288'
+  },
+  {
+    id: 'cs3',
+    name: 'Dr. Alicia Ramos, PT, DPT, GCS',
+    title: 'Board-Certified Geriatric Clinical Specialist & Physical Therapist',
+    agency: 'Kinetic In-Home Rehab PT',
+    category: 'therapy',
+    categoryLabel: '🏃 In-Home Physical Therapy',
+    rating: 4.9,
+    reviewCount: 54,
+    hourlyRate: '$90 / session',
+    location: 'Cambridge & North Shore',
+    serviceRadius: '20-mile coverage',
+    insuranceAccepted: ['Medicare Part B', 'UnitedHealthcare', 'Cigna', 'Self-Pay'],
+    verified: true,
+    backgroundChecked: true,
+    availability: 'Mon / Wed / Fri • 8 AM - 6 PM',
+    specialties: ['Balance & Vestibular Rehab', 'Post-Stroke Recovery', 'Gait Training', 'Home Ergonomics'],
+    bio: 'Doctor of Physical Therapy bringing complete rehabilitation equipment into your home. Tailored regimens for fall prevention, stroke rehab, and safe walking.',
+    avatarText: 'AR',
+    phone: '+1 (617) 555-0377'
+  },
+  {
+    id: 'cs4',
+    name: 'Nadia Farooq, MS, RD, LDN',
+    title: 'Clinical Renal & Diabetic Dietitian',
+    agency: 'Metabolic Vitality Nutrition',
+    category: 'nutrition',
+    categoryLabel: '🥗 Clinical Nutrition & Meal Planning',
+    rating: 4.8,
+    reviewCount: 39,
+    hourlyRate: '$75 / consultation',
+    location: 'In-Home & Tele-Health',
+    serviceRadius: 'Statewide / Virtual',
+    insuranceAccepted: ['Medicare', 'BlueCross', 'Tufts', 'Self-Pay'],
+    verified: true,
+    backgroundChecked: true,
+    availability: 'Tuesdays & Thursdays',
+    specialties: ['Low-Sodium Renal Menus', 'Continuous Glucose Balancing', 'Anti-Inflammatory Diets'],
+    bio: 'Helping patients and caregivers design pantry-friendly, culturally inclusive meal plans that protect kidneys and stabilize daily blood sugars.',
+    avatarText: 'NF',
+    phone: '+1 (617) 555-0466'
+  },
+  {
+    id: 'cs5',
+    name: 'Beacon Care Transit LLC',
+    title: 'Non-Emergency Wheelchair & Stretcher Medical Transport',
+    agency: 'Beacon Certified Medical Logistics',
+    category: 'transport',
+    categoryLabel: '🚐 Medical Transport & Mobility Escort',
+    rating: 4.9,
+    reviewCount: 148,
+    hourlyRate: '$45 base + $2.80/mile',
+    location: 'Statewide Fleet Dispatch',
+    serviceRadius: '50-mile coverage',
+    insuranceAccepted: ['Medicaid / PT1', 'Medicare Advantage', 'Self-Pay'],
+    verified: true,
+    backgroundChecked: true,
+    availability: '24/7 Advance & Same-Day Dispatch',
+    specialties: ['Hydraulic Lift Wheelchair Vans', 'Door-Through-Door Escort', 'Dialysis & Oncology Transit'],
+    bio: 'CPR-certified drivers providing compassionate door-through-door assistance for hospital discharges, dialysis schedules, and specialty clinic visits.',
+    avatarText: 'BT',
+    phone: '+1 (617) 555-0555'
+  },
+  {
+    id: 'cs6',
+    name: 'Gentle Haven Respite & Night Sitters',
+    title: 'Overnight Respite & Dementia Safety Sitting',
+    agency: 'Gentle Haven Care Alliance',
+    category: 'respite',
+    categoryLabel: '🌙 Respite & Overnight Care',
+    rating: 5.0,
+    reviewCount: 68,
+    hourlyRate: '$28 - $36 / hr',
+    location: 'Metropolitan Region',
+    serviceRadius: '35-mile coverage',
+    insuranceAccepted: ['State Respite Grants', 'VA Aid & Attendance', 'Self-Pay'],
+    verified: true,
+    backgroundChecked: true,
+    availability: 'Overnight Shifts (8 PM - 8 AM)',
+    specialties: ['Sundowning & Dementia Care', 'Wandering Prevention', 'Family Caregiver Relief'],
+    bio: 'Giving family caregivers the restful sleep they desperately need while trained sitters monitor safety, midnight medication, and gentle reassurance.',
+    avatarText: 'GH',
+    phone: '+1 (617) 555-0644'
+  },
+  {
+    id: 'cs7',
+    name: 'MobileLab Express Phlebotomy',
+    title: 'At-Home Certified Phlebotomist & Specimen Courier',
+    agency: 'MobileLab Clinical Diagnostics',
+    category: 'phlebotomy',
+    categoryLabel: '🩸 Mobile Blood Draw & Lab Courier',
+    rating: 4.9,
+    reviewCount: 92,
+    hourlyRate: '$55 / home visit draw',
+    location: 'Metropolitan Area',
+    serviceRadius: '25-mile coverage',
+    insuranceAccepted: ['LabCorp / Quest Direct Order', 'Medicare', 'Self-Pay'],
+    verified: true,
+    backgroundChecked: true,
+    availability: 'Mon - Sat • Early Morning 6 AM - 12 PM',
+    specialties: ['Difficult Vein Venipuncture', 'Pediatric & Geriatric Draws', 'Stat Lab Delivery'],
+    bio: 'Certified mobile phlebotomy specialists performing gentle, stress-free blood draws in the comfort of your home, transported directly to accredited labs.',
+    avatarText: 'ML',
+    phone: '+1 (617) 555-0733'
+  }
+];
 
 interface SupportNetworkProps {
   onBack: () => void;
@@ -369,177 +564,76 @@ const DEFAULT_PEERS: SupportPeer[] = [
   }
 ];
 
-const DEFAULT_POSTS: SocialPost[] = [
-  {
-    id: 'post-1',
-    authorName: 'Marcus Davenport',
-    authorHandle: '@marcus_d_health',
-    authorAvatar: 'MD',
-    authorRole: 'Cardio Circle Peer',
-    groupId: 'c1',
-    groupName: 'Cardio Vitality & Blood Pressure Circle',
-    isPersonalStory: true,
-    title: 'How 10 minutes of morning box breathing transformed my resting heart rate in 6 weeks',
-    content: `When my resting heart rate was constantly hovering around 86-90 BPM, I felt on edge all day long. My doctor recommended I combine daily 10k steps with a structured 10-minute morning box breathing routine (4s in, 4s hold, 4s out, 4s hold).
-
-After 42 consecutive days of tracking in Ogoo:
-• Resting HR dropped from 88 BPM to 70 BPM
-• Morning Blood Pressure stabilized at 118/76
-• Anxiety spikes during work meetings are down 80%
-
-Consistency beats intensity every single time. If you are starting today, just do 5 minutes tomorrow morning!`,
-    timestamp: '2h ago',
-    timeMs: Date.now() - 7200000,
-    tags: ['#HeartHealth', '#BoxBreathing', '#BloodPressure', '#Milestone'],
-    milestone: '🎯 Resting HR stabilized at 70 BPM (down 18 BPM)',
-    mood: 'Feeling Energized ⚡',
-    supports: 54,
-    userSupported: true,
-    claps: 28,
-    userClapped: false,
-    bookmarks: 19,
-    userBookmarked: true,
-    comments: [
-      {
-        id: 'comm-1',
-        authorName: 'Dr. Sarah Jenkins, MD',
-        authorAvatar: 'SJ',
-        authorRole: 'Cardiologist',
-        isExpert: true,
-        text: 'Marcus, this is a phenomenal textbook example of toning down sympathetic nervous system overdrive. Vagus nerve stimulation through rhythmic exhalations works wonders for vascular tone. Keep inspiring the circle!',
-        timestamp: '1h ago',
-        timeMs: Date.now() - 3600000,
-        likes: 18,
-        userLiked: true
-      },
-      {
-        id: 'comm-2',
-        authorName: 'Jordan Taylor',
-        authorAvatar: 'JT',
-        authorRole: 'Peer Member',
-        text: 'Starting my morning breathwork tomorrow because of this post. Thanks for sharing your exact protocol!',
-        timestamp: '45m ago',
-        timeMs: Date.now() - 2700000,
-        likes: 7
-      }
-    ]
-  },
-  {
-    id: 'post-2',
-    authorName: 'Dr. Sarah Jenkins, MD, FACC',
-    authorHandle: '@dr_sarah_cardio',
-    authorAvatar: 'SJ',
-    authorRole: 'Verified Cardiology Specialist',
-    isExpert: true,
-    isVerified: true,
-    title: 'Clinical Insight: Why Blood Pressure Spikes When You First Wake Up (And 3 Ways to Ease It)',
-    content: `The "morning blood pressure surge" is a natural circadian rhythm phenomenon as cortisol and adrenaline rise to prepare your body for waking. However, excessive spikes can place extra workload on arterial walls.
-
-Three evidence-based morning habits:
-1. Drink 16 oz of room-temperature water immediately upon waking to reduce blood viscosity.
-2. Sit on the edge of your bed for 60 seconds before standing to prevent sudden orthostatic vascular constriction.
-3. Postpone morning caffeine until 45-60 minutes after waking to let natural cortisol levels peak naturally first.
-
-Always log your morning vitals after resting seated for 5 minutes!`,
-    timestamp: '4h ago',
-    timeMs: Date.now() - 14400000,
-    tags: ['#CardiologyTips', '#MorningSurge', '#Vitals101', '#AskTheExpert'],
-    mood: 'Clinical Tip 🩺',
-    supports: 89,
-    userSupported: false,
-    claps: 42,
-    userClapped: true,
-    bookmarks: 56,
-    userBookmarked: false,
-    comments: [
-      {
-        id: 'comm-3',
-        authorName: 'Priya Mehta',
-        authorAvatar: 'PM',
-        authorRole: 'Community Member',
-        text: 'The 16oz morning water trick made an instant difference in my 8 AM readings. Thank you Dr. Jenkins!',
-        timestamp: '2h ago',
-        timeMs: Date.now() - 7200000,
-        likes: 12
-      }
-    ]
-  },
-  {
-    id: 'post-3',
-    authorName: 'Clara Washington',
-    authorHandle: '@clara_wellness',
-    authorAvatar: 'CW',
-    authorRole: 'Nutrition & Wellness Peer',
-    groupId: 'c3',
-    groupName: 'Healthy Living & Diabetes Navigators',
-    isPersonalStory: true,
-    title: 'Low-sodium meal prep hacks that actually made cooking delicious, not depressing!',
-    content: `When my cardiologist told me to stay under 1,800mg sodium daily, I honestly cried in the supermarket. Everything felt bland.
-
-Here is what changed the game for me over the last 30 days:
-• Smoked paprika, toasted cumin, fresh lemon zest & cracked black pepper create depth without a single grain of table salt.
-• Roasting garlic and blending it with Greek yogurt makes an incredible creamy sauce for roasted veggies and salmon.
-• Potassium-rich herbs like cilantro, fresh dill, and basil elevate every bowl.
-
-My latest blood pressure was 116/74 at the clinic yesterday! Don't lose hope if you're adjusting your diet.`,
-    timestamp: '6h ago',
-    timeMs: Date.now() - 21600000,
-    tags: ['#LowSodium', '#MealPrep', '#HealthyEating', '#CardioFood'],
-    milestone: '🌟 Clinic BP verified at 116/74 with diet alone',
-    mood: 'Celebrating Win 🎉',
-    supports: 72,
-    userSupported: true,
-    claps: 35,
-    userClapped: true,
-    bookmarks: 48,
-    userBookmarked: true,
-    comments: [
-      {
-        id: 'comm-4',
-        authorName: 'David Chen, MS, RD',
-        authorAvatar: 'DC',
-        authorRole: 'Clinical Dietitian',
-        isExpert: true,
-        text: 'Roasted garlic + acid (lemon/vinegar) triggers the same umami receptors on the palate as sodium chloride. Excellent culinary science, Clara!',
-        timestamp: '4h ago',
-        timeMs: Date.now() - 14400000,
-        likes: 15
-      }
-    ]
-  },
-  {
-    id: 'post-4',
-    authorName: 'Jordan Taylor',
-    authorHandle: '@jordan_t',
-    authorAvatar: 'JT',
-    authorRole: 'Hypertension Journey Lead',
-    groupId: 'c1',
-    groupName: 'Cardio Vitality & Blood Pressure Circle',
-    title: '14-day streak: 10,000 daily steps and 2.5L water! Small wins add up.',
-    content: `Taking 15-minute walking breaks after lunch and dinner has completely transformed my afternoon energy slumps. No more 3 PM espresso cravings!
-
-For anyone struggling to hit 10k steps, break it into three 20-minute chunks throughout the day instead of trying to do it all at once. Let's keep supporting each other this week!`,
-    timestamp: '9h ago',
-    timeMs: Date.now() - 32400000,
-    tags: ['#DailySteps', '#HydrationGoals', '#HabitTracking'],
-    milestone: '🏃 14 straight days of 10k+ steps completed',
-    mood: 'Proud & Grateful 🙏',
-    supports: 38,
-    userSupported: false,
-    claps: 22,
-    userClapped: false,
-    bookmarks: 8,
-    userBookmarked: false,
-    comments: []
-  }
-];
+const DEFAULT_POSTS: SocialPost[] = [];
 
 export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAskOgoo }) => {
   // Navigation
-  const [activeMainTab, setActiveMainTab] = useState<'feed' | 'circles' | 'experts' | 'peers' | 'messages' | 'my_activity'>('feed');
+  const [activeMainTab, setActiveMainTab] = useState<'feed' | 'circles' | 'experts' | 'peers' | 'messages' | 'marketplace' | 'my_activity'>('feed');
   const [feedFilter, setFeedFilter] = useState<'all' | 'my_circles' | 'stories' | 'expert_qa'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('All');
+
+  // Care Service Marketplace State
+  const [careServices, setCareServices] = useState<CareService[]>(() => {
+    if (Platform.OS === 'web') {
+      const saved = localStorage.getItem('ogoo_care_marketplace_services_v1');
+      if (saved) {
+        try { return JSON.parse(saved); } catch (e) {}
+      }
+    }
+    return DEFAULT_CARE_SERVICES;
+  });
+
+  const [careBookings, setCareBookings] = useState<CareBooking[]>(() => {
+    if (Platform.OS === 'web') {
+      const saved = localStorage.getItem('ogoo_care_marketplace_bookings_v1');
+      if (saved) {
+        try { return JSON.parse(saved); } catch (e) {}
+      }
+    }
+    return [];
+  });
+
+  const [marketplaceCategoryFilter, setMarketplaceCategoryFilter] = useState<string>('All');
+  const [marketplaceInsuranceFilter, setMarketplaceInsuranceFilter] = useState<string>('All');
+  const [marketplaceSubTab, setMarketplaceSubTab] = useState<'browse' | 'my_bookings'>('browse');
+
+  // Booking Modal State
+  const [selectedServiceForBooking, setSelectedServiceForBooking] = useState<CareService | null>(null);
+  const [bookingPatientName, setBookingPatientName] = useState('');
+  const [bookingPhone, setBookingPhone] = useState('');
+  const [bookingAddress, setBookingAddress] = useState('');
+  const [bookingDate, setBookingDate] = useState('Tomorrow');
+  const [bookingTimeSlot, setBookingTimeSlot] = useState('Morning (9 AM - 12 PM)');
+  const [bookingCareNotes, setBookingCareNotes] = useState('');
+  const [bookingPaymentType, setBookingPaymentType] = useState<'Insurance' | 'Self-Pay / Card'>('Insurance');
+  const [bookingInsuranceName, setBookingInsuranceName] = useState('Medicare Part B');
+
+  // List Service Modal State
+  const [showListServiceModal, setShowListServiceModal] = useState(false);
+  const [newServiceName, setNewServiceName] = useState('');
+  const [newServiceTitle, setNewServiceTitle] = useState('');
+  const [newServiceAgency, setNewServiceAgency] = useState('');
+  const [newServiceCategory, setNewServiceCategory] = useState<'nursing' | 'caregiver' | 'therapy' | 'nutrition' | 'mental_health' | 'transport' | 'respite' | 'phlebotomy'>('nursing');
+  const [newServiceRate, setNewServiceRate] = useState('');
+  const [newServiceLocation, setNewServiceLocation] = useState('');
+  const [newServiceRadius, setNewServiceRadius] = useState('25-mile radius');
+  const [newServiceBio, setNewServiceBio] = useState('');
+  const [newServiceSpecialties, setNewServiceSpecialties] = useState('');
+  const [newServicePhone, setNewServicePhone] = useState('');
+
+  // Sync Care Services and Bookings
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      localStorage.setItem('ogoo_care_marketplace_services_v1', JSON.stringify(careServices));
+    }
+  }, [careServices]);
+
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      localStorage.setItem('ogoo_care_marketplace_bookings_v1', JSON.stringify(careBookings));
+    }
+  }, [careBookings]);
 
   // Direct Messaging State
   const [threads, setThreads] = useState<ConversationThread[]>(() => {
@@ -667,7 +761,7 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
 
   // Expert Consultation Booking Modal
   const [selectedExpertForBooking, setSelectedExpertForBooking] = useState<SupportExpert | null>(null);
-  const [bookingDate, setBookingDate] = useState('Next Tuesday, 2:00 PM EST');
+  const [expertBookingDate, setExpertBookingDate] = useState('Next Tuesday, 2:00 PM EST');
   const [bookingReason, setBookingReason] = useState('Routine review of blood pressure trends and medication schedule');
 
   // Expanded Comment Thread IDs
@@ -756,44 +850,6 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
     setPostMilestone('');
     setIncludeMilestone(false);
     setShowCreatePostModal(false);
-    showToast('🎉 Your post has been published to the Support Network!');
-
-    // Realistic Peer Simulation: after 2.5s, a peer reacts and leaves an encouraging comment!
-    setTimeout(() => {
-      const simulatedPeer = peers[Math.floor(Math.random() * peers.length)];
-      const sampleReplies = [
-        "Thank you so much for sharing this! It's so motivating to see everyone's progress here 💪",
-        "Proud of your dedication! Keep taking it one step at a time ❤️",
-        "This is huge! Small consistent steps really make all the difference ✨",
-        "Inspiring update! Sending you continued strength and wellness on your journey 🌟"
-      ];
-      const randomReply = sampleReplies[Math.floor(Math.random() * sampleReplies.length)];
-
-      setPosts(prevPosts => {
-        return prevPosts.map(p => {
-          if (p.id === newPost.id) {
-            const newComment: SocialComment = {
-              id: 'comm-' + Date.now(),
-              authorName: simulatedPeer.name,
-              authorAvatar: simulatedPeer.name.split(' ').map(n => n[0]).join(''),
-              authorRole: simulatedPeer.struggle,
-              text: randomReply,
-              timestamp: 'Just now',
-              timeMs: Date.now(),
-              likes: 2
-            };
-            return {
-              ...p,
-              supports: p.supports + 1,
-              claps: p.claps + 1,
-              comments: [newComment, ...p.comments]
-            };
-          }
-          return p;
-        });
-      });
-      showToast(`💬 ${simulatedPeer.name} supported your post and left an encouraging note!`);
-    }, 2800);
   };
 
   // Handle Circle Creation
@@ -968,36 +1024,7 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
       }
     });
 
-    // Simulate peer replying back after 2.2 seconds
-    setTimeout(() => {
-      const replyMsg: DirectMessage = {
-        id: `reply-${Date.now()}`,
-        senderId: peer.id,
-        senderName: peer.name,
-        senderRole: 'Peer Member',
-        text: 'Thank you so much for the encouragement! Having peers like you in the community makes all the difference. Let us keep supporting each other!',
-        timestamp: 'Just now',
-        timeMs: Date.now(),
-        status: 'read'
-      };
-
-      setThreads(prev =>
-        prev.map(t =>
-          (t.participantId === peer.id && t.participantType === 'peer')
-            ? {
-                ...t,
-                unreadCount: t.id === activeThreadId ? 0 : t.unreadCount + 1,
-                lastMessageSnippet: replyMsg.text,
-                lastMessageTime: 'Just now',
-                lastMessageMs: Date.now(),
-                messages: [...t.messages, replyMsg]
-              }
-            : t
-        )
-      );
-    }, 2200);
-
-    showToast(`✨ Encouragement sent to ${peer.name}! Check Direct Messages for replies.`);
+    showToast(`✨ Encouragement sent to ${peer.name}! Check Direct Messages for thread.`);
     setSelectedPeerForMsg(null);
     setPeerEncouragementNote('');
   };
@@ -1005,7 +1032,7 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
   // Book Consultation with Specialist
   const handleConfirmBooking = () => {
     if (!selectedExpertForBooking) return;
-    showToast(`📅 Consultation booked with ${selectedExpertForBooking.name} for ${bookingDate}! Telehealth link added.`);
+    showToast(`📅 Consultation booked with ${selectedExpertForBooking.name} for ${expertBookingDate}! Telehealth link added.`);
     setSelectedExpertForBooking(null);
   };
 
@@ -1079,6 +1106,7 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
       <View style={styles.mainNav}>
         {[
           { key: 'feed', label: '📰 Community Feed' },
+          { key: 'marketplace', label: `🏪 Care Marketplace (${careServices.length})` },
           { key: 'circles', label: `👥 Circles (${circles.length})` },
           { key: 'experts', label: '🩺 Specialists' },
           { key: 'peers', label: '🤝 Peer Matches' },
@@ -1759,6 +1787,381 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
           </View>
         )}
 
+        {/* TAB 7: CARE SERVICE MARKETPLACE */}
+        {activeMainTab === 'marketplace' && (
+          <View>
+            {/* Disclaimer */}
+            <View style={styles.tabDisclaimerCard}>
+              <Text style={styles.tabDisclaimerText}>
+                🏪 Verified Care Marketplace: Connect directly with licensed independent clinical nurses, certified personal care aides (CNA/PCA), physical therapists, medical escorts, and mobile phlebotomy specialists. All bookings and service requests are recorded in your persistent health portal.
+              </Text>
+            </View>
+
+            {/* Marketplace Top Hero & Action Banner */}
+            <View style={[styles.createPostHero, { marginBottom: 16 }]}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+                <View style={{ flex: 1, marginRight: 10 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                    <Briefcase color={COLORS.accent} size={18} style={{ marginRight: 6 }} />
+                    <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '800' }}>In-Home Care Marketplace</Text>
+                  </View>
+                  <Text style={{ color: COLORS.textSub, fontSize: 12 }}>
+                    Hire certified caregivers, home nurses, physical therapists, and medical transport with transparent pricing.
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => setShowListServiceModal(true)}
+                  style={{
+                    backgroundColor: '#5c1794',
+                    paddingHorizontal: 12,
+                    paddingVertical: 7,
+                    borderRadius: 10,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    borderWidth: 1,
+                    borderColor: '#9d32dc'
+                  }}
+                >
+                  <Plus color="#FFF" size={14} style={{ marginRight: 4 }} />
+                  <Text style={{ color: '#FFF', fontSize: 11, fontWeight: 'bold' }}>List Service</Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Sub-Tabs: Browse vs My Bookings */}
+              <View style={{ flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: 10, padding: 3, marginTop: 4 }}>
+                <TouchableOpacity
+                  onPress={() => setMarketplaceSubTab('browse')}
+                  style={{
+                    flex: 1,
+                    paddingVertical: 8,
+                    alignItems: 'center',
+                    borderRadius: 8,
+                    backgroundColor: marketplaceSubTab === 'browse' ? '#5c1794' : 'transparent'
+                  }}
+                >
+                  <Text style={{ color: marketplaceSubTab === 'browse' ? '#FFF' : COLORS.textSub, fontSize: 12, fontWeight: '700' }}>
+                    Browse Providers ({careServices.length})
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setMarketplaceSubTab('my_bookings')}
+                  style={{
+                    flex: 1,
+                    paddingVertical: 8,
+                    alignItems: 'center',
+                    borderRadius: 8,
+                    backgroundColor: marketplaceSubTab === 'my_bookings' ? '#5c1794' : 'transparent'
+                  }}
+                >
+                  <Text style={{ color: marketplaceSubTab === 'my_bookings' ? '#FFF' : COLORS.textSub, fontSize: 12, fontWeight: '700' }}>
+                    My Bookings ({careBookings.length})
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {marketplaceSubTab === 'browse' ? (
+              <View>
+                {/* Search Input */}
+                <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 12, paddingHorizontal: 10, marginBottom: 12, borderWidth: 1, borderColor: '#5c1794' }}>
+                  <Search color={COLORS.accent} size={16} style={{ marginRight: 6 }} />
+                  <TextInput
+                    style={{ flex: 1, height: 38, color: '#FFF', fontSize: 13 }}
+                    placeholder="Search by name, clinical skill, agency, or care need..."
+                    placeholderTextColor="#8e7b9e"
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                  />
+                  {searchQuery ? (
+                    <TouchableOpacity onPress={() => setSearchQuery('')}>
+                      <X color="#FFF" size={14} />
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
+
+                {/* Category Pills Scroll */}
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 10 }}>
+                  {[
+                    { key: 'All', label: 'All Services' },
+                    { key: 'nursing', label: '🩺 Clinical Nursing' },
+                    { key: 'caregiver', label: '🧑‍🦼 Caregivers / PCA' },
+                    { key: 'therapy', label: '🏃 Physical Therapy' },
+                    { key: 'nutrition', label: '🥗 Nutritionists' },
+                    { key: 'transport', label: '🚐 Medical Transport' },
+                    { key: 'respite', label: '🌙 Overnight Respite' },
+                    { key: 'phlebotomy', label: '🩸 Mobile Blood Draw' }
+                  ].map(cat => (
+                    <TouchableOpacity
+                      key={cat.key}
+                      onPress={() => setMarketplaceCategoryFilter(cat.key)}
+                      style={{
+                        paddingHorizontal: 12,
+                        paddingVertical: 6,
+                        borderRadius: 14,
+                        marginRight: 8,
+                        backgroundColor: marketplaceCategoryFilter === cat.key ? '#5c1794' : 'rgba(255,255,255,0.05)',
+                        borderWidth: 1,
+                        borderColor: marketplaceCategoryFilter === cat.key ? COLORS.accent : 'rgba(255,255,255,0.1)'
+                      }}
+                    >
+                      <Text style={{ color: marketplaceCategoryFilter === cat.key ? '#FFF' : COLORS.textSub, fontSize: 11, fontWeight: '700' }}>
+                        {cat.label}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+
+                {/* Insurance Filter Pills Scroll */}
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 14 }}>
+                  <CreditCard color={COLORS.textSub} size={13} style={{ marginRight: 6 }} />
+                  <Text style={{ color: COLORS.textSub, fontSize: 11, fontWeight: '600', marginRight: 8 }}>Payment:</Text>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    {['All', 'Medicare', 'Medicaid', 'BlueCross', 'Self-Pay'].map(ins => (
+                      <TouchableOpacity
+                        key={ins}
+                        onPress={() => setMarketplaceInsuranceFilter(ins)}
+                        style={{
+                          paddingHorizontal: 8,
+                          paddingVertical: 3,
+                          borderRadius: 8,
+                          marginRight: 6,
+                          backgroundColor: marketplaceInsuranceFilter === ins ? 'rgba(229,114,163,0.2)' : 'rgba(255,255,255,0.04)',
+                          borderWidth: 1,
+                          borderColor: marketplaceInsuranceFilter === ins ? COLORS.accent : 'transparent'
+                        }}
+                      >
+                        <Text style={{ color: marketplaceInsuranceFilter === ins ? COLORS.accent : COLORS.textSub, fontSize: 10, fontWeight: '700' }}>
+                          {ins === 'All' ? 'All Payment Options' : ins}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+
+                {/* Providers List */}
+                {careServices
+                  .filter(srv => {
+                    if (marketplaceCategoryFilter !== 'All' && srv.category !== marketplaceCategoryFilter) return false;
+                    if (marketplaceInsuranceFilter !== 'All' && !srv.insuranceAccepted.includes(marketplaceInsuranceFilter)) return false;
+                    if (searchQuery.trim()) {
+                      const q = searchQuery.toLowerCase();
+                      return (
+                        srv.name.toLowerCase().includes(q) ||
+                        srv.title.toLowerCase().includes(q) ||
+                        (srv.agency && srv.agency.toLowerCase().includes(q)) ||
+                        srv.specialties.some(sp => sp.toLowerCase().includes(q)) ||
+                        srv.bio.toLowerCase().includes(q)
+                      );
+                    }
+                    return true;
+                  })
+                  .map(service => (
+                    <View
+                      key={service.id}
+                      style={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                        borderRadius: 14,
+                        padding: 14,
+                        marginBottom: 14,
+                        borderWidth: 1,
+                        borderColor: '#5c1794'
+                      }}
+                    >
+                      {/* Provider Header */}
+                      <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10 }}>
+                        <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: '#5c1794', alignItems: 'center', justifyContent: 'center', marginRight: 12, borderWidth: 1.5, borderColor: '#9d32dc' }}>
+                          <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 15 }}>{service.avatarText}</Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                          <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
+                            <Text style={{ color: '#FFF', fontSize: 15, fontWeight: '800', marginRight: 6 }}>{service.name}</Text>
+                            {service.verified && (
+                              <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(0,200,100,0.15)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, borderWidth: 1, borderColor: '#00C864' }}>
+                                <ShieldCheck color="#00C864" size={11} style={{ marginRight: 3 }} />
+                                <Text style={{ color: '#00C864', fontSize: 9.5, fontWeight: '800' }}>VERIFIED LICENSE</Text>
+                              </View>
+                            )}
+                          </View>
+                          <Text style={{ color: '#d8b4fe', fontSize: 12, fontWeight: '600', marginTop: 2 }}>{service.title}</Text>
+                          {service.agency && (
+                            <Text style={{ color: COLORS.textSub, fontSize: 11, marginTop: 1 }}>🏢 {service.agency}</Text>
+                          )}
+                        </View>
+                      </View>
+
+                      {/* Pricing & Rating Badge Row */}
+                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.25)', padding: 8, borderRadius: 10, marginBottom: 10 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                          <Text style={{ color: COLORS.gold, fontSize: 12, fontWeight: '800', marginRight: 4 }}>⭐ {service.rating.toFixed(1)}</Text>
+                          <Text style={{ color: COLORS.textSub, fontSize: 11 }}>({service.reviewCount} verified reviews)</Text>
+                        </View>
+                        <Text style={{ color: COLORS.online, fontWeight: '800', fontSize: 13 }}>{service.hourlyRate}</Text>
+                      </View>
+
+                      {/* Coverage & Availability */}
+                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                          <MapPin color={COLORS.accent} size={12} style={{ marginRight: 4 }} />
+                          <Text style={{ color: COLORS.textSub, fontSize: 11 }}>{service.location} • {service.serviceRadius}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(56, 189, 248, 0.12)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6 }}>
+                          <Clock color="#38bdf8" size={11} style={{ marginRight: 3 }} />
+                          <Text style={{ color: '#38bdf8', fontSize: 10, fontWeight: '700' }}>{service.availability}</Text>
+                        </View>
+                      </View>
+
+                      {/* Bio */}
+                      <Text style={{ color: '#e2d9f3', fontSize: 12.5, lineHeight: 18, marginBottom: 10 }}>{service.bio}</Text>
+
+                      {/* Specialties Tags */}
+                      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+                        {service.specialties.map((spec, sIdx) => (
+                          <View key={sIdx} style={{ backgroundColor: 'rgba(92,23,148,0.3)', paddingHorizontal: 7, paddingVertical: 3, borderRadius: 6, borderWidth: 1, borderColor: 'rgba(216,180,254,0.2)' }}>
+                            <Text style={{ color: '#d8b4fe', fontSize: 10.5, fontWeight: '600' }}>{spec}</Text>
+                          </View>
+                        ))}
+                      </View>
+
+                      {/* Accepted Insurance Badges */}
+                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12, flexWrap: 'wrap', gap: 4 }}>
+                        <Text style={{ color: COLORS.textSub, fontSize: 10, fontWeight: 'bold' }}>Accepted:</Text>
+                        {service.insuranceAccepted.map((ins, iIdx) => (
+                          <View key={iIdx} style={{ backgroundColor: 'rgba(255,255,255,0.06)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
+                            <Text style={{ color: '#a78bfa', fontSize: 9.5 }}>{ins}</Text>
+                          </View>
+                        ))}
+                      </View>
+
+                      {/* Action Buttons */}
+                      <View style={{ flexDirection: 'row', gap: 8 }}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            setSelectedServiceForBooking(service);
+                            setBookingPatientName('');
+                            setBookingCareNotes('');
+                          }}
+                          style={{
+                            flex: 1,
+                            backgroundColor: '#5c1794',
+                            paddingVertical: 10,
+                            borderRadius: 10,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderWidth: 1,
+                            borderColor: COLORS.accent
+                          }}
+                        >
+                          <Calendar color="#FFF" size={15} style={{ marginRight: 6 }} />
+                          <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 12 }}>Book Care Service</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                          onPress={() => handleOpenChatWith('expert', { id: service.id, name: service.name, specialty: service.title })}
+                          style={{
+                            backgroundColor: 'rgba(255,255,255,0.08)',
+                            paddingHorizontal: 14,
+                            paddingVertical: 10,
+                            borderRadius: 10,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderWidth: 1,
+                            borderColor: 'rgba(255,255,255,0.15)'
+                          }}
+                        >
+                          <MessageCircle color={COLORS.accent} size={15} style={{ marginRight: 4 }} />
+                          <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 12 }}>Message</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  ))}
+              </View>
+            ) : (
+              /* MY BOOKINGS SUB-TAB */
+              <View>
+                <Text style={[styles.sectionHeading, { marginBottom: 12 }]}>My Scheduled Care Services ({careBookings.length})</Text>
+                {careBookings.length === 0 ? (
+                  <View style={styles.emptyContainer}>
+                    <Briefcase color={COLORS.textSub} size={36} style={{ marginBottom: 10, opacity: 0.8 }} />
+                    <Text style={styles.emptyTitle}>No Active Care Bookings</Text>
+                    <Text style={styles.emptySubtitle}>
+                      You haven't requested any in-home nurses, caregivers, or physical therapists yet. Explore verified professionals in the browse tab!
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => setMarketplaceSubTab('browse')}
+                      style={{ backgroundColor: '#5c1794', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 10, marginTop: 14, borderWidth: 1, borderColor: COLORS.accent }}
+                    >
+                      <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 12 }}>Browse Marketplace Providers</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  careBookings.map(booking => (
+                    <View
+                      key={booking.id}
+                      style={{
+                        backgroundColor: 'rgba(255,255,255,0.04)',
+                        borderRadius: 14,
+                        padding: 14,
+                        marginBottom: 12,
+                        borderWidth: 1,
+                        borderColor: '#5c1794'
+                      }}
+                    >
+                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+                        <View style={{ flex: 1, marginRight: 8 }}>
+                          <Text style={{ color: '#FFF', fontSize: 15, fontWeight: '800' }}>{booking.providerName}</Text>
+                          <Text style={{ color: '#d8b4fe', fontSize: 12, fontWeight: '600' }}>{booking.serviceTitle}</Text>
+                        </View>
+                        <View style={{ backgroundColor: booking.status === 'Confirmed' ? 'rgba(0,200,100,0.15)' : 'rgba(251,191,36,0.15)', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6, borderWidth: 1, borderColor: booking.status === 'Confirmed' ? '#00C864' : '#fbbf24' }}>
+                          <Text style={{ color: booking.status === 'Confirmed' ? '#00C864' : '#fbbf24', fontSize: 10, fontWeight: '800' }}>
+                            {booking.status.toUpperCase()}
+                          </Text>
+                        </View>
+                      </View>
+
+                      <View style={{ backgroundColor: 'rgba(0,0,0,0.2)', padding: 10, borderRadius: 8, marginVertical: 8 }}>
+                        <Text style={{ color: '#FFF', fontSize: 12, fontWeight: '700', marginBottom: 3 }}>
+                          📅 Scheduled: {booking.preferredDate} • {booking.preferredTimeSlot}
+                        </Text>
+                        <Text style={{ color: COLORS.textSub, fontSize: 11, marginBottom: 2 }}>
+                          📍 Patient & Address: {booking.patientName} ({booking.patientPhone}) • {booking.address}
+                        </Text>
+                        <Text style={{ color: COLORS.textSub, fontSize: 11, marginBottom: 2 }}>
+                          💳 Payment Method: {booking.paymentMethod} {booking.insuranceProvider ? `(${booking.insuranceProvider})` : ''}
+                        </Text>
+                        {booking.careNotes ? (
+                          <Text style={{ color: '#e2d9f3', fontSize: 11, fontStyle: 'italic', marginTop: 4 }}>
+                            📝 Care Notes: {booking.careNotes}
+                          </Text>
+                        ) : null}
+                      </View>
+
+                      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 8, marginTop: 4 }}>
+                        <TouchableOpacity
+                          onPress={() => handleOpenChatWith('expert', { id: booking.serviceId, name: booking.providerName, specialty: booking.serviceTitle })}
+                          style={{ backgroundColor: '#5c1794', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 }}
+                        >
+                          <Text style={{ color: '#FFF', fontSize: 11, fontWeight: 'bold' }}>💬 Message</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() => {
+                            setCareBookings(prev => prev.filter(b => b.id !== booking.id));
+                            showToast('Booking cancelled.');
+                          }}
+                          style={{ backgroundColor: 'rgba(255,75,75,0.15)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 1, borderColor: '#FF4B4B' }}
+                        >
+                          <Text style={{ color: '#FF4B4B', fontSize: 11, fontWeight: 'bold' }}>Cancel</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  ))
+                )}
+              </View>
+            )}
+          </View>
+        )}
+
         {/* Support Network Persistent Bottom Disclaimer */}
         <View style={styles.bottomDisclaimer}>
           <Text style={styles.bottomDisclaimerText}>
@@ -2069,8 +2472,8 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
             <Text style={styles.formLabel}>Select Preferred Date & Time Slot:</Text>
             <TextInput
               style={styles.modalTextInput}
-              value={bookingDate}
-              onChangeText={setBookingDate}
+              value={expertBookingDate}
+              onChangeText={setExpertBookingDate}
             />
 
             <Text style={styles.formLabel}>Primary Reason for Visit:</Text>
@@ -2094,6 +2497,340 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
               <CheckCircle color="#FFF" size={16} style={{ marginRight: 6 }} />
               <Text style={styles.publishSubmitBtnText}>Confirm Telehealth Consultation</Text>
             </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* MODAL: BOOK IN-HOME CARE SERVICE */}
+      <Modal visible={!!selectedServiceForBooking} animationType="slide" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContentBox, { maxHeight: '90%' }]}>
+            <View style={styles.modalHeader}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Briefcase color={COLORS.accent} size={20} style={{ marginRight: 8 }} />
+                <Text style={styles.modalTitle}>Request Care Service</Text>
+              </View>
+              <TouchableOpacity onPress={() => setSelectedServiceForBooking(null)}>
+                <X color="#FFF" size={20} />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {selectedServiceForBooking && (
+                <View style={{ backgroundColor: '#20053b', padding: 12, borderRadius: 12, marginBottom: 14, borderWidth: 1, borderColor: '#5c1794' }}>
+                  <Text style={{ color: '#FFF', fontWeight: '800', fontSize: 14 }}>{selectedServiceForBooking.name}</Text>
+                  <Text style={{ color: '#d8b4fe', fontSize: 12 }}>{selectedServiceForBooking.title}</Text>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 }}>
+                    <Text style={{ color: COLORS.online, fontWeight: '700', fontSize: 12 }}>Rate: {selectedServiceForBooking.hourlyRate}</Text>
+                    <Text style={{ color: COLORS.textSub, fontSize: 11 }}>📍 {selectedServiceForBooking.location}</Text>
+                  </View>
+                </View>
+              )}
+
+              {/* Form Fields */}
+              <Text style={styles.inputFieldLabel}>Patient Full Name</Text>
+              <TextInput
+                style={styles.modalTextInput}
+                placeholder="Full name of patient needing care..."
+                placeholderTextColor="#7e6c98"
+                value={bookingPatientName}
+                onChangeText={setBookingPatientName}
+              />
+
+              <Text style={styles.inputFieldLabel}>Contact Phone Number</Text>
+              <TextInput
+                style={styles.modalTextInput}
+                placeholder="e.g. +1 (555) 019-2834"
+                placeholderTextColor="#7e6c98"
+                keyboardType="phone-pad"
+                value={bookingPhone}
+                onChangeText={setBookingPhone}
+              />
+
+              <Text style={styles.inputFieldLabel}>Service Address / Location</Text>
+              <TextInput
+                style={styles.modalTextInput}
+                placeholder="Home address or facility for care visit..."
+                placeholderTextColor="#7e6c98"
+                value={bookingAddress}
+                onChangeText={setBookingAddress}
+              />
+
+              <View style={{ flexDirection: 'row', gap: 10 }}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.inputFieldLabel}>Preferred Date</Text>
+                  <TextInput
+                    style={styles.modalTextInput}
+                    placeholder="e.g. Tomorrow or MM/DD"
+                    placeholderTextColor="#7e6c98"
+                    value={bookingDate}
+                    onChangeText={setBookingDate}
+                  />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.inputFieldLabel}>Preferred Time Slot</Text>
+                  <TextInput
+                    style={styles.modalTextInput}
+                    placeholder="e.g. Morning 9 AM"
+                    placeholderTextColor="#7e6c98"
+                    value={bookingTimeSlot}
+                    onChangeText={setBookingTimeSlot}
+                  />
+                </View>
+              </View>
+
+              <Text style={styles.inputFieldLabel}>Payment Method</Text>
+              <View style={{ flexDirection: 'row', gap: 8, marginBottom: 12 }}>
+                {(['Insurance', 'Self-Pay / Card'] as const).map(pm => (
+                  <TouchableOpacity
+                    key={pm}
+                    onPress={() => setBookingPaymentType(pm)}
+                    style={{
+                      flex: 1,
+                      paddingVertical: 10,
+                      borderRadius: 10,
+                      alignItems: 'center',
+                      backgroundColor: bookingPaymentType === pm ? '#5c1794' : 'rgba(255,255,255,0.05)',
+                      borderWidth: 1,
+                      borderColor: bookingPaymentType === pm ? COLORS.accent : 'transparent'
+                    }}
+                  >
+                    <Text style={{ color: bookingPaymentType === pm ? '#FFF' : COLORS.textSub, fontSize: 12, fontWeight: '700' }}>
+                      {pm}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {bookingPaymentType === 'Insurance' && (
+                <View>
+                  <Text style={styles.inputFieldLabel}>Insurance Provider / Plan</Text>
+                  <TextInput
+                    style={styles.modalTextInput}
+                    placeholder="e.g. Medicare Part B, BlueCross, Medicaid..."
+                    placeholderTextColor="#7e6c98"
+                    value={bookingInsuranceName}
+                    onChangeText={setBookingInsuranceName}
+                  />
+                </View>
+              )}
+
+              <Text style={styles.inputFieldLabel}>Care Requirements & Clinical Notes</Text>
+              <TextInput
+                style={[styles.modalTextInput, { height: 75, textAlignVertical: 'top' }]}
+                placeholder="Describe patient's condition, mobility level, medication help needed, or wound care instructions..."
+                placeholderTextColor="#7e6c98"
+                multiline
+                value={bookingCareNotes}
+                onChangeText={setBookingCareNotes}
+              />
+
+              <View style={styles.modalDisclaimerBox}>
+                <Text style={styles.modalDisclaimerText}>
+                  ⚠️ Disclaimer: Care service providers in the marketplace are independent clinicians and agencies. They will review your clinical requirements and confirm availability prior to dispatch.
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                onPress={() => {
+                  if (!selectedServiceForBooking) return;
+                  if (!bookingPatientName.trim() || !bookingAddress.trim()) {
+                    Alert.alert('Required Fields', 'Please enter patient name and service address.');
+                    return;
+                  }
+                  const newBooking: CareBooking = {
+                    id: `bk-${Date.now()}`,
+                    serviceId: selectedServiceForBooking.id,
+                    providerName: selectedServiceForBooking.name,
+                    serviceTitle: selectedServiceForBooking.title,
+                    serviceCategory: selectedServiceForBooking.categoryLabel,
+                    patientName: bookingPatientName.trim(),
+                    patientPhone: bookingPhone.trim() || 'On File',
+                    address: bookingAddress.trim(),
+                    preferredDate: bookingDate.trim() || 'Soonest Available',
+                    preferredTimeSlot: bookingTimeSlot.trim() || 'Standard Daytime',
+                    careNotes: bookingCareNotes.trim(),
+                    paymentMethod: bookingPaymentType,
+                    insuranceProvider: bookingPaymentType === 'Insurance' ? bookingInsuranceName : undefined,
+                    status: 'Confirmed',
+                    createdAt: Date.now()
+                  };
+                  setCareBookings(prev => [newBooking, ...prev]);
+                  handleOpenChatWith('expert', { id: selectedServiceForBooking.id, name: selectedServiceForBooking.name, specialty: selectedServiceForBooking.title });
+                  setSelectedServiceForBooking(null);
+                  setMarketplaceSubTab('my_bookings');
+                  showToast(`✅ Care request confirmed with ${selectedServiceForBooking.name}! View in My Bookings.`);
+                }}
+                style={styles.publishSubmitBtn}
+              >
+                <CheckCircle color="#FFF" size={16} style={{ marginRight: 6 }} />
+                <Text style={styles.publishSubmitBtnText}>Submit Care Request</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* MODAL: LIST YOUR CARE SERVICE */}
+      <Modal visible={showListServiceModal} animationType="slide" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContentBox, { maxHeight: '90%' }]}>
+            <View style={styles.modalHeader}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Plus color={COLORS.accent} size={20} style={{ marginRight: 8 }} />
+                <Text style={styles.modalTitle}>List Your Care Service</Text>
+              </View>
+              <TouchableOpacity onPress={() => setShowListServiceModal(false)}>
+                <X color="#FFF" size={20} />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Text style={styles.inputFieldLabel}>Provider / Clinician Full Name *</Text>
+              <TextInput
+                style={styles.modalTextInput}
+                placeholder="e.g. Sarah Miller, RN, BSN"
+                placeholderTextColor="#7e6c98"
+                value={newServiceName}
+                onChangeText={setNewServiceName}
+              />
+
+              <Text style={styles.inputFieldLabel}>Professional Title & Credentials *</Text>
+              <TextInput
+                style={styles.modalTextInput}
+                placeholder="e.g. Licensed Home Infusion Nurse & Wound Specialist"
+                placeholderTextColor="#7e6c98"
+                value={newServiceTitle}
+                onChangeText={setNewServiceTitle}
+              />
+
+              <Text style={styles.inputFieldLabel}>Agency or Practice Name (Optional)</Text>
+              <TextInput
+                style={styles.modalTextInput}
+                placeholder="e.g. Miller Clinical Care LLC"
+                placeholderTextColor="#7e6c98"
+                value={newServiceAgency}
+                onChangeText={setNewServiceAgency}
+              />
+
+              <Text style={styles.inputFieldLabel}>Category</Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
+                {[
+                  { key: 'nursing', label: '🩺 Clinical Nursing' },
+                  { key: 'caregiver', label: '🧑‍🦼 Caregiver/PCA' },
+                  { key: 'therapy', label: '🏃 Physical Therapy' },
+                  { key: 'nutrition', label: '🥗 Nutrition' },
+                  { key: 'transport', label: '🚐 Transport' },
+                  { key: 'respite', label: '🌙 Respite Care' },
+                  { key: 'phlebotomy', label: '🩸 Phlebotomy' }
+                ].map(c => (
+                  <TouchableOpacity
+                    key={c.key}
+                    onPress={() => setNewServiceCategory(c.key as any)}
+                    style={{
+                      paddingHorizontal: 10,
+                      paddingVertical: 6,
+                      borderRadius: 8,
+                      backgroundColor: newServiceCategory === c.key ? '#5c1794' : 'rgba(255,255,255,0.05)',
+                      borderWidth: 1,
+                      borderColor: newServiceCategory === c.key ? COLORS.accent : 'transparent'
+                    }}
+                  >
+                    <Text style={{ color: newServiceCategory === c.key ? '#FFF' : COLORS.textSub, fontSize: 11, fontWeight: '700' }}>
+                      {c.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              <Text style={styles.inputFieldLabel}>Hourly / Visit Rate *</Text>
+              <TextInput
+                style={styles.modalTextInput}
+                placeholder="e.g. $55 / hr or $85 / visit"
+                placeholderTextColor="#7e6c98"
+                value={newServiceRate}
+                onChangeText={setNewServiceRate}
+              />
+
+              <Text style={styles.inputFieldLabel}>Service Location & Coverage Radius *</Text>
+              <TextInput
+                style={styles.modalTextInput}
+                placeholder="e.g. Greater Boston (Up to 30 miles)"
+                placeholderTextColor="#7e6c98"
+                value={newServiceLocation}
+                onChangeText={setNewServiceLocation}
+              />
+
+              <Text style={styles.inputFieldLabel}>Contact Phone *</Text>
+              <TextInput
+                style={styles.modalTextInput}
+                placeholder="e.g. +1 (617) 555-0199"
+                placeholderTextColor="#7e6c98"
+                keyboardType="phone-pad"
+                value={newServicePhone}
+                onChangeText={setNewServicePhone}
+              />
+
+              <Text style={styles.inputFieldLabel}>Specialties (comma-separated)</Text>
+              <TextInput
+                style={styles.modalTextInput}
+                placeholder="e.g. Post-Op Care, IV Therapy, Catheter Care"
+                placeholderTextColor="#7e6c98"
+                value={newServiceSpecialties}
+                onChangeText={setNewServiceSpecialties}
+              />
+
+              <Text style={styles.inputFieldLabel}>Professional Bio & Clinical Background</Text>
+              <TextInput
+                style={[styles.modalTextInput, { height: 75, textAlignVertical: 'top' }]}
+                placeholder="Share your clinical background, years of experience, and care philosophy..."
+                placeholderTextColor="#7e6c98"
+                multiline
+                value={newServiceBio}
+                onChangeText={setNewServiceBio}
+              />
+
+              <TouchableOpacity
+                onPress={() => {
+                  if (!newServiceName.trim() || !newServiceTitle.trim() || !newServiceRate.trim()) {
+                    Alert.alert('Required Fields', 'Please fill in your name, professional title, and rate.');
+                    return;
+                  }
+                  const created: CareService = {
+                    id: `cs-${Date.now()}`,
+                    name: newServiceName.trim(),
+                    title: newServiceTitle.trim(),
+                    agency: newServiceAgency.trim() || undefined,
+                    category: newServiceCategory,
+                    categoryLabel: newServiceCategory === 'nursing' ? '🩺 In-Home Clinical Nursing' : newServiceCategory === 'caregiver' ? '🧑‍🦼 Caregiver & Home Health Aide' : newServiceCategory === 'therapy' ? '🏃 In-Home Physical Therapy' : newServiceCategory === 'nutrition' ? '🥗 Clinical Nutrition' : newServiceCategory === 'transport' ? '🚐 Medical Transport' : newServiceCategory === 'respite' ? '🌙 Respite & Overnight Care' : '🩸 Mobile Blood Draw',
+                    rating: 5.0,
+                    reviewCount: 1,
+                    hourlyRate: newServiceRate.trim(),
+                    location: newServiceLocation.trim() || 'Local Area',
+                    serviceRadius: '30-mile coverage',
+                    insuranceAccepted: ['Medicare', 'Private Insurance', 'Self-Pay'],
+                    verified: true,
+                    backgroundChecked: true,
+                    availability: 'Available by Appointment',
+                    specialties: newServiceSpecialties.split(',').map(s => s.trim()).filter(Boolean),
+                    bio: newServiceBio.trim() || 'Dedicated certified healthcare professional committed to excellence in patient-centered care.',
+                    avatarText: newServiceName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase(),
+                    phone: newServicePhone.trim() || undefined
+                  };
+                  setCareServices(prev => [created, ...prev]);
+                  setShowListServiceModal(false);
+                  setNewServiceName('');
+                  setNewServiceTitle('');
+                  setNewServiceRate('');
+                  setNewServiceBio('');
+                  showToast('✨ Your care service has been published to the Care Marketplace!');
+                }}
+                style={styles.publishSubmitBtn}
+              >
+                <CheckCircle color="#FFF" size={16} style={{ marginRight: 6 }} />
+                <Text style={styles.publishSubmitBtnText}>Publish Care Service Listing</Text>
+              </TouchableOpacity>
+            </ScrollView>
           </View>
         </View>
       </Modal>
@@ -3030,6 +3767,13 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 13,
     marginBottom: 10,
+  },
+  inputFieldLabel: {
+    color: '#d8b4fe',
+    fontSize: 12,
+    fontWeight: '700',
+    marginBottom: 4,
+    marginTop: 6,
   },
   checkboxBox: {
     width: 18,

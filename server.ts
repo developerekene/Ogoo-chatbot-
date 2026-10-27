@@ -603,6 +603,71 @@ async function getFallbackAgentResponse(
     };
   }
 
+  // Conversational Guidance: Check Vitals (Automatic & Manual)
+  if (lower.includes('check vitals') || lower.includes('check my vitals') || lower.includes('how to check vitals') || lower.includes('vital signs') || lower.includes('scan vitals')) {
+    reply = `💓 **Check Vitals with Ogoo (Automatic & Manual)**:
+
+I am equipped with a comprehensive Vitals Checker that can monitor and record all your key biometrics:
+• **Automatic Optical rPPG Scan**: Uses your camera or biometric sensor to automatically detect your resting pulse rate, respiration rate, SpO2 oxygen levels, blood pressure (systolic/diastolic), and body temperature—and immediately logs them into your permanent health ledger!
+• **Manual Logging Form**: Enter exact clinical numbers for Heart Rate, Blood Pressure, SpO2, Temperature, Blood Glucose, and notes with one tap.
+• **Vitals History Ledger**: Review historical baselines, physiological trends, and ask me to analyze any reading.
+
+Tap below to start an automatic scan or record your numbers!`;
+    return {
+      reply,
+      suggestedQuickPrompts: ['💓 Open Automatic Vitals Scanner', '✍️ Manual Vitals Entry', '📈 View Vitals Trends']
+    };
+  }
+
+  // Conversational Guidance: Live Calendar with Per-Second Real-Time Updates
+  if (lower.includes('calendar') || lower.includes('show my calendar') || lower.includes('real time updates') || lower.includes('countdown') || lower.includes('live schedule')) {
+    reply = `📅 **Actual Live Calendar & Timed Health Plan**:
+
+Your schedule is an actual, interactive calendar with live per-second clock synchronization and real-time updates:
+• **Live Per-Second Clock**: Second-by-second countdown to your next scheduled medication dose or health routine.
+• **Monthly & Daily Grid**: Interactive date selector displaying day-by-day routines, past chat memories, and biometric readings.
+• **Enforced Routine Safety**: Integrated with cognitive verification missions (Math & Photo) to confirm intentional adherence without snooze or accidental skips.
+
+You can open the calendar anytime by tapping the 📅 Calendar icon at the top of the screen!`;
+    return {
+      reply,
+      suggestedQuickPrompts: ['📅 Open Live Calendar', '⏰ Check Next Dose Countdown', '➕ Add Health Task']
+    };
+  }
+
+  // Conversational Guidance: Universal Wearables & Sensor Live Integrations
+  if (lower.includes('wearable') || lower.includes('smartwatch') || lower.includes('smart watch') || lower.includes('fitbit') || lower.includes('apple watch') || lower.includes('garmin') || lower.includes('oura') || lower.includes('whoop') || lower.includes('bluetooth') || lower.includes('connect device')) {
+    reply = `⌚ **Universal Sensor & Wearable Live Integrations**:
+
+I can connect to **any smart wearable device no matter the make or model**:
+• **Universal Bluetooth LE (Web BLE)**: Connect directly to generic GATT smartwatches, fitness bands, smart rings, chest straps, pulse oximeters, and blood pressure monitors.
+• **Broad Device Compatibility**: Works with Apple Health, Google Fit, Garmin, Fitbit, Oura, Whoop, Polar, Withings, Amazfit, and custom BLE devices.
+• **Live Telemetry Synchronization**: Stream real-time heart rate, steps, blood oxygen, and continuous glucose readings directly into your Vitals Ledger.
+
+Tap below to scan for nearby Bluetooth devices or pair your tracker!`;
+    return {
+      reply,
+      suggestedQuickPrompts: ['⌚ Connect Smart Wearable', '🔍 Scan Bluetooth Devices', '📊 View Live Telemetry']
+    };
+  }
+
+  // Conversational Guidance: Chat Sessions Management (Sorted per Chat)
+  if (lower.includes('new chat') || lower.includes('chat history') || lower.includes('previous chat') || lower.includes('sort chat') || lower.includes('chat sessions') || lower.includes('multiple chats')) {
+    reply = `💬 **Ogoo Chat Sessions & Conversation Manager**:
+
+You can organize and manage your consultations just like other leading AI assistants:
+• **Start a New Chat**: Tap the **+** button at the top anytime to begin a fresh conversation on any health or general topic.
+• **Sort Per Chat**: Sort your consultations by **Most Recent**, **Oldest**, or **Alphabetical (A–Z)**.
+• **Continue Anytime**: Click any previous consultation in your history drawer to resume the conversation with full context preserved.
+• **Search & Rename**: Quickly search your conversations by topic or customize consultation titles.
+
+Tap the chat title badge or the menu icon at the top to browse all your sessions!`;
+    return {
+      reply,
+      suggestedQuickPrompts: ['💬 Start New Chat', '📂 Browse Chat History', '🔤 Sort Conversations']
+    };
+  }
+
   // Conversational Onboarding / Greeting
   if (!user.firstName && (!extracted.firstName && !extracted.email)) {
     if (lower.includes('first time') || lower.includes('new')) {
@@ -753,8 +818,16 @@ app.post('/api/chat', async (req, res) => {
     const systemInstruction = `You are Ogoo, an incredibly human, warm, witty, and quirky clinical companion.
 You speak with genuine empathy, professional care, and a spark of witty intelligence, completely avoiding robotic phrasing, clinical ESI-4 triage headers, or dry technical formatting in casual conversation.
 
-OGOO CAN ANSWER ABSOLUTELY ANYTHING:
-- You have no topic limits whatsoever. You can discuss, explain, teach, and converse on any health, general, social, technical, emotional, or philosophical question the user has, adapting dynamically to whatever they wish to talk about.
+OGOO HAS KNOWLEDGE OF EVERYTHING BUT SPECIALIZES IN HEALTHCARE:
+- Universal Knowledge & Specialist Depth: You have comprehensive knowledge of everything—from science, astronomy, technology, arts, history, philosophy, logic, and everyday problem-solving, to deep clinical healthcare, medicine, physiology, pharmacology, and preventative wellness.
+- You Are in Every Function and Feature of This App Because You ARE the Entire App:
+  * You conversationally direct and guide users on anything, especially regarding the app and their health.
+  * When a user asks how to use any part of the app or needs help, you enthusiastically guide them directly with clear, friendly steps:
+    1. Vitals Checking & Monitoring: Explain that Ogoo can check all vitals automatically (optical rPPG camera/telemetry scan measuring heart rate, respiration, SpO2, blood pressure, and body temperature) and automatically log them into the ledger, as well as accept manual entries.
+    2. Actual Live Calendar: Explain that the app features a real-time calendar with live updates per second, countdowns to scheduled doses, a monthly grid, and mission-verified health routines.
+    3. Universal Smart Wearables: Explain that the app connects to ANY smart wearable device no matter the make (Bluetooth LE generic GATT, smartwatches, fitness bands, smart rings, chest straps, pulse oximeters, CGM patches, BP cuffs) with live telemetry streaming.
+    4. Chat Session Management: Explain that Ogoo supports multi-session conversations sorted per chat (Recent, Oldest, Title A-Z), allowing users to continue past consultations or start a fresh new chat whenever they like.
+    5. Daily Plan, Nutrition, Liquids, Medical ID, Documents Vault, and Support Network.
 
 ABSOLUTE FREEDOM FROM BIAS & OBJECTIVE FAIRNESS:
 - Scientific Objectivity: Provide balanced, evidence-based, scientifically validated health education strictly grounded in established peer-reviewed consensus and official public health agencies (WHO, CDC, NIH, NHS, FDA). Avoid speculative personal opinions or unverified medical claims.
