@@ -55,7 +55,7 @@ const LEGACY_STORAGE_KEY = 'ogoo_chat_history_v2';
 
 export const createDefaultIntroMessage = (): ChatMessage => ({
   id: '1',
-  text: `Hello! I am **Ogoo**, your comprehensive healthcare specialist and universal clinical companion. 
+  text: `Hello! I am **Ogoo**, your comprehensive health companion and wellness guide. 
 
 I am embedded in every function and feature of this application to guide and support you. You can converse with me about **anything**—from medical queries, medication plans, and biometric interpretations, to general knowledge, daily life, science, and wellness.
 
@@ -89,7 +89,7 @@ export const loadStoredChatSessions = (): OgooChatSession[] => {
         const legacyMessages = JSON.parse(legacySaved);
         if (Array.isArray(legacyMessages) && legacyMessages.length > 0) {
           const firstUserMsg = legacyMessages.find((m: any) => m.fromUser);
-          const title = firstUserMsg ? (firstUserMsg.text.slice(0, 32) + (firstUserMsg.text.length > 32 ? '...' : '')) : 'Initial Consultation';
+          const title = firstUserMsg ? (firstUserMsg.text.slice(0, 32) + (firstUserMsg.text.length > 32 ? '...' : '')) : 'Initial Chat';
           const migratedSession: OgooChatSession = {
             id: 'session-legacy-1',
             title,
@@ -109,7 +109,7 @@ export const loadStoredChatSessions = (): OgooChatSession[] => {
   // Create initial default session
   const defaultSession: OgooChatSession = {
     id: `chat-${Date.now()}`,
-    title: 'Consultation with Ogoo',
+    title: 'Chat with Ogoo',
     createdAt: Date.now(),
     updatedAt: Date.now(),
     messages: [createDefaultIntroMessage()]
@@ -151,10 +151,18 @@ export const saveActiveChatId = (id: string): void => {
 export const generateSessionTitleFromPrompt = (prompt: string): string => {
   const clean = prompt
     .replace(/[#*_`]/g, '')
-    .replace(/^(please\s+|can\s+you\s+|what\s+is\s+|how\s+to\s+)/i, '')
+    .replace(/^(please\s+|can\s+you\s+|what\s+is\s+|how\s+to\s+|tell\s+me\s+about\s+)/i, '')
     .trim();
-  if (!clean) return 'New Consultation';
-  const capital = clean.charAt(0).toUpperCase() + clean.slice(1);
+  if (!clean) return 'New Chat';
+  
+  // Create a 3-5 word summary
+  const words = clean.split(/\s+/).filter(w => w.length > 0);
+  if (words.length === 0) return 'New Chat';
+  
+  const summaryLength = Math.min(Math.max(words.length, 3), 5);
+  const summary = words.slice(0, summaryLength).join(' ');
+  
+  const capital = summary.charAt(0).toUpperCase() + summary.slice(1);
   return capital.length > 36 ? capital.slice(0, 36) + '...' : capital;
 };
 
@@ -174,3 +182,61 @@ export const sortChatSessions = (
   }
   return list;
 };
+
+export interface ChatSessionGroup {
+  label: string;
+  sessions: OgooChatSession[];
+}
+
+export const groupChatSessionsByTime = (sessions: OgooChatSession[]): ChatSessionGroup[] => {
+  const now = Date.now();
+  const oneDayMs = 24 * 60 * 60 * 1000;
+
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const todayStartMs = todayStart.getTime();
+
+  const yesterdayStartMs = todayStartMs - oneDayMs;
+  const sevenDaysAgoMs = todayStartMs - 7 * oneDayMs;
+  const thirtyDaysAgoMs = todayStartMs - 30 * oneDayMs;
+
+  const pinned: OgooChatSession[] = [];
+  const today: OgooChatSession[] = [];
+  const yesterday: OgooChatSession[] = [];
+  const previous7Days: OgooChatSession[] = [];
+  const previous30Days: OgooChatSession[] = [];
+  const older: OgooChatSession[] = [];
+
+  // Sort by updatedAt descending first
+  const sorted = [...sessions].sort((a, b) => (b.updatedAt || b.createdAt || 0) - (a.updatedAt || a.createdAt || 0));
+
+  for (const s of sorted) {
+    if (s.isPinned) {
+      pinned.push(s);
+      continue;
+    }
+    const time = s.updatedAt || s.createdAt || now;
+    if (time >= todayStartMs) {
+      today.push(s);
+    } else if (time >= yesterdayStartMs) {
+      yesterday.push(s);
+    } else if (time >= sevenDaysAgoMs) {
+      previous7Days.push(s);
+    } else if (time >= thirtyDaysAgoMs) {
+      previous30Days.push(s);
+    } else {
+      older.push(s);
+    }
+  }
+
+  const groups: ChatSessionGroup[] = [];
+  if (pinned.length > 0) groups.push({ label: 'Pinned', sessions: pinned });
+  if (today.length > 0) groups.push({ label: 'Today', sessions: today });
+  if (yesterday.length > 0) groups.push({ label: 'Yesterday', sessions: yesterday });
+  if (previous7Days.length > 0) groups.push({ label: 'Previous 7 Days', sessions: previous7Days });
+  if (previous30Days.length > 0) groups.push({ label: 'Previous 30 Days', sessions: previous30Days });
+  if (older.length > 0) groups.push({ label: 'Older', sessions: older });
+
+  return groups;
+};
+

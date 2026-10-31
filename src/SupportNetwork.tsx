@@ -145,7 +145,7 @@ export interface SupportExpert {
   verified: boolean;
   location: string;
   tags: string[];
-  consultationsHeld: number;
+  appointmentsHeld: number;
   isSaved?: boolean;
 }
 
@@ -249,7 +249,7 @@ export const DEFAULT_CARE_SERVICES: CareService[] = [
   {
     id: 'cs3',
     name: 'Dr. Alicia Ramos, PT, DPT, GCS',
-    title: 'Board-Certified Geriatric Clinical Specialist & Physical Therapist',
+    title: 'Board-Certified Geriatric Clinical Provider & Physical Therapist',
     agency: 'Kinetic In-Home Rehab PT',
     category: 'therapy',
     categoryLabel: '🏃 In-Home Physical Therapy',
@@ -276,7 +276,7 @@ export const DEFAULT_CARE_SERVICES: CareService[] = [
     categoryLabel: '🥗 Clinical Nutrition & Meal Planning',
     rating: 4.8,
     reviewCount: 39,
-    hourlyRate: '$75 / consultation',
+    hourlyRate: '$75 / session',
     location: 'In-Home & Tele-Health',
     serviceRadius: 'Statewide / Virtual',
     insuranceAccepted: ['Medicare', 'BlueCross', 'Tufts', 'Self-Pay'],
@@ -347,7 +347,7 @@ export const DEFAULT_CARE_SERVICES: CareService[] = [
     backgroundChecked: true,
     availability: 'Mon - Sat • Early Morning 6 AM - 12 PM',
     specialties: ['Difficult Vein Venipuncture', 'Pediatric & Geriatric Draws', 'Stat Lab Delivery'],
-    bio: 'Certified mobile phlebotomy specialists performing gentle, stress-free blood draws in the comfort of your home, transported directly to accredited labs.',
+    bio: 'Certified mobile phlebotomy clinicians performing gentle, stress-free blood draws in the comfort of your home, transported directly to accredited labs.',
     avatarText: 'ML',
     phone: '+1 (617) 555-0733'
   }
@@ -419,7 +419,7 @@ const DEFAULT_CIRCLES: SupportCircle[] = [
     id: 'c5',
     name: 'Restorative Sleep & Circadian Reset',
     category: 'Sleep Health',
-    description: 'Evidence-based wind-down protocols, sleep hygiene improvements, and insomnia recovery supported by certified sleep specialists.',
+    description: 'Evidence-based wind-down protocols, sleep hygiene improvements, and insomnia recovery supported by certified sleep clinicians & coaches.',
     memberCount: 280,
     joined: false,
     isPrivate: false,
@@ -449,7 +449,7 @@ const DEFAULT_EXPERTS: SupportExpert[] = [
   {
     id: 'e1',
     name: 'Dr. Sarah Jenkins, MD, FACC',
-    specialty: 'Cardiologist & Preventive Health Specialist',
+    specialty: 'Cardiologist & Preventive Health Provider',
     credentials: 'Board Certified Cardiology • Johns Hopkins Fellow',
     clinic: 'Metropolitan Heart & Vascular Institute',
     bio: 'Specializing in autonomic blood pressure regulation, resting heart rate optimization, and lifestyle-integrated cardiology care.',
@@ -459,7 +459,7 @@ const DEFAULT_EXPERTS: SupportExpert[] = [
     verified: true,
     location: 'Boston, MA (Telehealth Nationwide)',
     tags: ['Cardiology', 'Hypertension', 'Preventive'],
-    consultationsHeld: 320,
+    appointmentsHeld: 320,
     isSaved: true
   },
   {
@@ -469,19 +469,19 @@ const DEFAULT_EXPERTS: SupportExpert[] = [
     credentials: 'Licensed Marriage & Family Therapist • Board Certified Telehealth',
     clinic: 'Mindful Somatic Wellness Center',
     bio: 'Dedicated to helping individuals manage chronic illness anxiety, white-coat tension, habit formation, and nervous system regulation.',
-    schedule: 'Consultations • Tue / Thu / Sat',
+    schedule: 'Appointments • Tue / Thu / Sat',
     rating: 5.0,
     reviewCount: 62,
     verified: true,
-    location: 'Austin, TX (Online Consultations)',
+    location: 'Austin, TX (Online Telehealth)',
     tags: ['MentalHealth', 'Anxiety', 'SomaticBreath'],
-    consultationsHeld: 240
+    appointmentsHeld: 240
   },
   {
     id: 'e3',
     name: 'David Chen, MS, RD, CDCES',
     specialty: 'Certified Clinical Dietitian & Diabetes Educator',
-    credentials: 'MS Clinical Nutrition • Certified Diabetes Care Specialist',
+    credentials: 'MS Clinical Nutrition • Certified Diabetes Care Provider',
     clinic: 'Integrative Nutrition & Metabolic Health',
     bio: 'Practical, anti-inflammatory nutrition planning, sodium reduction without taste sacrifice, and blood glucose stability blueprints.',
     schedule: 'Advising Hours • Mon - Fri 9am - 4pm EST',
@@ -490,12 +490,12 @@ const DEFAULT_EXPERTS: SupportExpert[] = [
     verified: true,
     location: 'San Francisco, CA',
     tags: ['Nutrition', 'Diabetes', 'Dietetics'],
-    consultationsHeld: 450
+    appointmentsHeld: 450
   },
   {
     id: 'e4',
     name: 'Dr. Maya Patel, MD, ABSM',
-    specialty: 'Sleep Medicine & Circadian Specialist',
+    specialty: 'Sleep Medicine & Circadian Provider',
     credentials: 'American Board of Sleep Medicine • Neurologist',
     clinic: 'Restorative Sleep & Brain Health Clinic',
     bio: 'Restoring deep sleep and REM architecture for patients with insomnia, sleep apnea recovery, and chronic fatigue.',
@@ -505,7 +505,7 @@ const DEFAULT_EXPERTS: SupportExpert[] = [
     verified: true,
     location: 'Chicago, IL',
     tags: ['SleepMedicine', 'Insomnia', 'Circadian'],
-    consultationsHeld: 190
+    appointmentsHeld: 190
   }
 ];
 
@@ -1029,10 +1029,10 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
     setPeerEncouragementNote('');
   };
 
-  // Book Consultation with Specialist
+  // Book Appointment with Independent Clinician
   const handleConfirmBooking = () => {
     if (!selectedExpertForBooking) return;
-    showToast(`📅 Consultation booked with ${selectedExpertForBooking.name} for ${expertBookingDate}! Telehealth link added.`);
+    showToast(`📅 Appointment booked with ${selectedExpertForBooking.name} for ${expertBookingDate}! Telehealth link added.`);
     setSelectedExpertForBooking(null);
   };
 
@@ -1108,7 +1108,7 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
           { key: 'feed', label: '📰 Community Feed' },
           { key: 'marketplace', label: `🏪 Care Marketplace (${careServices.length})` },
           { key: 'circles', label: `👥 Circles (${circles.length})` },
-          { key: 'experts', label: '🩺 Specialists' },
+          { key: 'experts', label: '🩺 Clinicians' },
           { key: 'peers', label: '🤝 Peer Matches' },
           {
             key: 'messages',
@@ -1537,8 +1537,8 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
           <View>
             <View style={styles.sectionHeaderRow}>
               <View>
-                <Text style={styles.sectionHeading}>Verified Clinical Specialists</Text>
-                <Text style={styles.sectionSub}>Book 1-on-1 consultations or prepare clinical questions with Ogoo</Text>
+                <Text style={styles.sectionHeading}>Verified Independent Clinicians</Text>
+                <Text style={styles.sectionSub}>Book 1-on-1 sessions or prepare clinical questions with Ogoo</Text>
               </View>
             </View>
 
@@ -1547,7 +1547,7 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
               <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
                 <ShieldCheck color="#fbbf24" size={15} style={{ marginTop: 2, marginRight: 8 }} />
                 <Text style={styles.tabDisclaimerText}>
-                  <Text style={{ fontWeight: 'bold', color: '#fbbf24' }}>Important Notice:</Text> Specialists in this directory are independent third-party practitioners. Any clinical advice, recommendations, diagnoses, or consultation schedules provided by experts are solely their own and are not the legal responsibility of, related to, or endorsed by Ogoo.
+                  <Text style={{ fontWeight: 'bold', color: '#fbbf24' }}>Important Notice:</Text> Clinicians in this directory are independent third-party practitioners. Any clinical advice, recommendations, diagnoses, or appointment schedules provided by experts are solely their own and are not the legal responsibility of, related to, or endorsed by Ogoo.
                 </Text>
               </View>
             </View>
@@ -1589,7 +1589,7 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
                     style={[styles.bookConsultBtn, { backgroundColor: '#380c66', borderColor: '#7c3aed' }]}
                   >
                     <MessageSquare color="#d8b4fe" size={14} style={{ marginRight: 6 }} />
-                    <Text style={[styles.bookConsultBtnText, { color: '#d8b4fe' }]}>Message Specialist</Text>
+                    <Text style={[styles.bookConsultBtnText, { color: '#d8b4fe' }]}>Message Clinician</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -1597,13 +1597,13 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
                     style={styles.bookConsultBtn}
                   >
                     <Calendar color="#FFF" size={14} style={{ marginRight: 6 }} />
-                    <Text style={styles.bookConsultBtnText}>Book Consult</Text>
+                    <Text style={styles.bookConsultBtnText}>Book Appointment</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     onPress={() => {
                       onBack();
-                      onAskOgoo(`I would like to prepare for a clinical consultation with ${expert.name} (${expert.specialty}). What relevant vitals, symptoms, and questions should I organize from my profile?`);
+                      onAskOgoo(`I would like to prepare for a clinical appointment with ${expert.name} (${expert.specialty}). What relevant vitals, symptoms, and questions should I organize from my profile?`);
                     }}
                     style={styles.askOgooPrepBtn}
                   >
@@ -1727,7 +1727,7 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
             setActiveThreadId={setActiveThreadId}
             peers={peers}
             experts={experts}
-            onOpenConsultationBooking={(expert) => setSelectedExpertForBooking(expert)}
+            onOpenAppointmentBooking={(expert) => setSelectedExpertForBooking(expert)}
             onAskOgoo={onAskOgoo}
           />
         )}
@@ -1793,7 +1793,7 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
             {/* Disclaimer */}
             <View style={styles.tabDisclaimerCard}>
               <Text style={styles.tabDisclaimerText}>
-                🏪 Verified Care Marketplace: Connect directly with licensed independent clinical nurses, certified personal care aides (CNA/PCA), physical therapists, medical escorts, and mobile phlebotomy specialists. All bookings and service requests are recorded in your persistent health portal.
+                🏪 Verified Care Marketplace: Connect directly with licensed independent clinical nurses, certified personal care aides (CNA/PCA), physical therapists, medical escorts, and mobile phlebotomy clinicians. All bookings and service requests are recorded in your persistent health portal.
               </Text>
             </View>
 
@@ -2165,7 +2165,7 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
         {/* Support Network Persistent Bottom Disclaimer */}
         <View style={styles.bottomDisclaimer}>
           <Text style={styles.bottomDisclaimerText}>
-            ⚠️ Disclaimer: Experts, specialists, peer, circle members, and all advice, opinions, or recommendations shared in the Support Network are independent community and third-party contributions and are not guaranteed by us or related to Ogoo. Ogoo is not a medical practice and assumes no liability for actions taken based on any community or specialist guidance, consultations, or interactions here. Always attend a licenced medical practice or hospital for professional clinical advice, diagnoses, treatment, and medical emergencies.
+            ⚠️ Disclaimer: Independent clinicians, peers, circle members, and all advice, opinions, or recommendations shared in the Support Network are community and third-party contributions and are not guaranteed by us or related to Ogoo. Ogoo is not a medical practice and assumes no liability for actions taken based on any community or clinician guidance, sessions, or interactions here. Always attend a licensed medical practice or hospital for professional clinical advice, diagnoses, treatment, and medical emergencies.
           </Text>
         </View>
       </ScrollView>
@@ -2486,7 +2486,7 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
 
             <View style={styles.modalDisclaimerBox}>
               <Text style={styles.modalDisclaimerText}>
-                ⚠️ Disclaimer: Telehealth consultations and expert advice are conducted independently by the specialist and are not our legal responsibility or related to Ogoo.
+                ⚠️ Disclaimer: Telehealth appointments and advice are conducted independently by the clinician and are not our legal responsibility or related to Ogoo.
               </Text>
             </View>
 
@@ -2495,7 +2495,7 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
               style={styles.publishSubmitBtn}
             >
               <CheckCircle color="#FFF" size={16} style={{ marginRight: 6 }} />
-              <Text style={styles.publishSubmitBtnText}>Confirm Telehealth Consultation</Text>
+              <Text style={styles.publishSubmitBtnText}>Confirm Telehealth Appointment</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -2698,7 +2698,7 @@ export const SupportNetworkPage: React.FC<SupportNetworkProps> = ({ onBack, onAs
               <Text style={styles.inputFieldLabel}>Professional Title & Credentials *</Text>
               <TextInput
                 style={styles.modalTextInput}
-                placeholder="e.g. Licensed Home Infusion Nurse & Wound Specialist"
+                placeholder="e.g. Licensed Home Infusion Nurse & Wound Care Provider"
                 placeholderTextColor="#7e6c98"
                 value={newServiceTitle}
                 onChangeText={setNewServiceTitle}

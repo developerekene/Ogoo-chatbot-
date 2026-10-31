@@ -238,7 +238,7 @@ export const AutomaticVitalsChecker: React.FC<AutomaticVitalsCheckerProps> = ({
       <View style={styles.ogooDirectorCard}>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
           <Sparkles color="#E572A3" size={16} style={{ marginRight: 6 }} />
-          <Text style={styles.ogooDirectorTitle}>Ogoo's Clinical Vitals Specialist</Text>
+          <Text style={styles.ogooDirectorTitle}>Ogoo's Clinical Vitals Guide</Text>
         </View>
         <Text style={styles.ogooDirectorBody}>
           "I can **check all your vitals automatically** right now using camera photoplethysmography and connected sensors, or you can log your numbers manually. I immediately interpret your blood pressure, pulse, and oxygen with clinical precision!"

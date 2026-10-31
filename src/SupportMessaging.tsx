@@ -87,7 +87,7 @@ interface SupportMessagingViewProps {
   setActiveThreadId: (id: string | null) => void;
   peers: any[];
   experts: any[];
-  onOpenConsultationBooking?: (expert: any) => void;
+  onOpenAppointmentBooking?: (expert: any) => void;
   onAskOgoo?: (prompt: string) => void;
 }
 
@@ -98,7 +98,7 @@ export const SupportMessagingView: React.FC<SupportMessagingViewProps> = ({
   setActiveThreadId,
   peers,
   experts,
-  onOpenConsultationBooking,
+  onOpenAppointmentBooking,
   onAskOgoo
 }) => {
   const [filterType, setFilterType] = useState<'all' | 'experts' | 'peers' | 'unread'>('all');
@@ -184,7 +184,7 @@ export const SupportMessagingView: React.FC<SupportMessagingViewProps> = ({
     const newThreadId = `thread_${type}_${item.id}`;
     const initialGreeting =
       type === 'expert'
-        ? `Hello! I am ${item.name} (${item.specialty}). Feel free to ask clinical questions, share vitals updates, or inquire about telehealth consultations.`
+        ? `Hello! I am ${item.name} (${item.specialty}). Feel free to ask clinical questions, share vitals updates, or inquire about telehealth appointments.`
         : `Hey there! I am ${item.name}. Excited to connect with someone working through ${item.struggle}!`;
 
     const newThread: ConversationThread = {
@@ -265,7 +265,7 @@ export const SupportMessagingView: React.FC<SupportMessagingViewProps> = ({
         <View style={styles.listHeaderRow}>
           <View>
             <Text style={styles.sectionHeading}>Direct Health Conversations</Text>
-            <Text style={styles.sectionSub}>Private, two-way messaging with specialists & peer champions</Text>
+            <Text style={styles.sectionSub}>Private, two-way messaging with clinicians & peer champions</Text>
           </View>
           <TouchableOpacity
             onPress={() => setShowNewChatModal(true)}
@@ -298,7 +298,7 @@ export const SupportMessagingView: React.FC<SupportMessagingViewProps> = ({
         <View style={styles.filterBarRow}>
           {[
             { key: 'all', label: `All (${threads.length})` },
-            { key: 'experts', label: `🩺 Specialists (${threads.filter(t => t.participantType === 'expert').length})` },
+            { key: 'experts', label: `🩺 Clinicians (${threads.filter(t => t.participantType === 'expert').length})` },
             { key: 'peers', label: `🤝 Peers (${threads.filter(t => t.participantType === 'peer').length})` },
             { key: 'unread', label: `🔴 Unread (${threads.filter(t => t.unreadCount > 0).length})` }
           ].map(f => (
@@ -329,7 +329,7 @@ export const SupportMessagingView: React.FC<SupportMessagingViewProps> = ({
               <MessageSquare color={COLORS.textSub} size={40} style={{ marginBottom: 12 }} />
               <Text style={styles.emptyTitle}>No conversations found</Text>
               <Text style={styles.emptySubtitle}>
-                Start a private health conversation with a verified specialist or peer match.
+                Start a private health conversation with a verified clinician or peer match.
               </Text>
               <TouchableOpacity
                 onPress={() => setShowNewChatModal(true)}
@@ -423,7 +423,7 @@ export const SupportMessagingView: React.FC<SupportMessagingViewProps> = ({
                   </View>
                   <View>
                     <Text style={styles.modalTitle}>Choose Who to Message</Text>
-                    <Text style={{ color: COLORS.textSub, fontSize: 12 }}>Pick a specialist or peer</Text>
+                    <Text style={{ color: COLORS.textSub, fontSize: 12 }}>Pick a clinician or peer</Text>
                   </View>
                 </View>
                 <TouchableOpacity
@@ -458,7 +458,7 @@ export const SupportMessagingView: React.FC<SupportMessagingViewProps> = ({
               </Text>
 
               <ScrollView style={{ maxHeight: 380 }} showsVerticalScrollIndicator={false}>
-                <Text style={styles.pickerSectionTitle}>🩺 Verified Specialists & Clinicians</Text>
+                <Text style={styles.pickerSectionTitle}>🩺 Verified Clinicians & Providers</Text>
                 {experts.map(exp => (
                   <TouchableOpacity
                     key={exp.id}
@@ -554,11 +554,11 @@ export const SupportMessagingView: React.FC<SupportMessagingViewProps> = ({
             <Text style={styles.shareVitalsBtnText}>Share Vitals</Text>
           </TouchableOpacity>
 
-          {activeThread.participantType === 'expert' && onOpenConsultationBooking && (
+          {activeThread.participantType === 'expert' && onOpenAppointmentBooking && (
             <TouchableOpacity
               onPress={() => {
                 const exp = experts.find(e => e.id === activeThread.participantId) || experts[0];
-                onOpenConsultationBooking(exp);
+                onOpenAppointmentBooking(exp);
               }}
               style={styles.consultBookingHeaderBtn}
             >
@@ -605,7 +605,7 @@ export const SupportMessagingView: React.FC<SupportMessagingViewProps> = ({
               >
                 {!isUser && (
                   <Text style={styles.messageSenderLabel}>
-                    {msg.senderName} {activeThread.isVerified ? '• Specialist' : '• Peer'}
+                    {msg.senderName} {activeThread.isVerified ? '• Clinician' : '• Peer'}
                   </Text>
                 )}
 

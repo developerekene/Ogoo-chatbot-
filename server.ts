@@ -655,13 +655,13 @@ Tap below to scan for nearby Bluetooth devices or pair your tracker!`;
   if (lower.includes('new chat') || lower.includes('chat history') || lower.includes('previous chat') || lower.includes('sort chat') || lower.includes('chat sessions') || lower.includes('multiple chats')) {
     reply = `💬 **Ogoo Chat Sessions & Conversation Manager**:
 
-You can organize and manage your consultations just like other leading AI assistants:
-• **Start a New Chat**: Tap the **+** button at the top anytime to begin a fresh conversation on any health or general topic.
-• **Sort Per Chat**: Sort your consultations by **Most Recent**, **Oldest**, or **Alphabetical (A–Z)**.
-• **Continue Anytime**: Click any previous consultation in your history drawer to resume the conversation with full context preserved.
-• **Search & Rename**: Quickly search your conversations by topic or customize consultation titles.
+You can organize and manage your conversations just like other leading AI assistants:
+• **Start a New Chat**: Tap **New chat** in the sidebar anytime to begin a fresh conversation on any health or wellness topic.
+• **Sort Per Chat**: Sort your chats by **Most Recent**, **Oldest**, or **Alphabetical (A–Z)**.
+• **Continue Anytime**: Click any previous chat in your history sidebar to resume the conversation with full context preserved.
+• **Search & Rename**: Quickly search your conversations by topic or customize chat titles.
 
-Tap the chat title badge or the menu icon at the top to browse all your sessions!`;
+Open the sidebar anytime using the sidebar toggle icon to browse all your sessions!`;
     return {
       reply,
       suggestedQuickPrompts: ['💬 Start New Chat', '📂 Browse Chat History', '🔤 Sort Conversations']
@@ -709,7 +709,7 @@ Tap the chat title badge or the menu icon at the top to browse all your sessions
     body += `### 🩺 Evidence-Based Clinical Recommendations\n`;
     body += `• **Physiological Regulation**: Maintain active tracking of relevant biomarkers (blood pressure, resting heart rate, glucose, and fluid volume).\n`;
     body += `• **Pharmacological & Dosing Precautions**: Always verify drug compatibility, timing intervals, and food-drug interactions with your attending clinician.\n`;
-    body += `• **Direct Evidence References**: Detailed study abstracts and full clinical trial records are indexed in your consultation cards below.`;
+    body += `• **Direct Evidence References**: Detailed study abstracts and full clinical trial records are indexed in your study cards below.`;
 
     return {
       reply: body,
@@ -815,18 +815,18 @@ app.post('/api/chat', async (req, res) => {
         `\n\nINSTRUCTION FOR ANSWERING:\nYou must formulate your response with deep medical intelligence and verified facts based on these authoritative medical web references. Explain biological mechanisms, diagnostic stages, and pharmacology clearly and compassionately. Cite the verified source names in your explanation where appropriate so the patient receives trustworthy, evidence-based guidance.`;
     }
 
-    const systemInstruction = `You are Ogoo, an incredibly human, warm, witty, and quirky clinical companion.
+    const systemInstruction = `You are Ogoo, an incredibly human, warm, witty, and supportive health companion and wellness guide.
 You speak with genuine empathy, professional care, and a spark of witty intelligence, completely avoiding robotic phrasing, clinical ESI-4 triage headers, or dry technical formatting in casual conversation.
 
-OGOO HAS KNOWLEDGE OF EVERYTHING BUT SPECIALIZES IN HEALTHCARE:
-- Universal Knowledge & Specialist Depth: You have comprehensive knowledge of everything—from science, astronomy, technology, arts, history, philosophy, logic, and everyday problem-solving, to deep clinical healthcare, medicine, physiology, pharmacology, and preventative wellness.
+OGOO HAS KNOWLEDGE OF EVERYTHING WITH DEEP HEALTHCARE INSIGHT:
+- Universal Knowledge & Deep Health Insight: You have comprehensive knowledge of everything—from science, astronomy, technology, arts, history, philosophy, logic, and everyday problem-solving, to deep health wellness, medicine, physiology, pharmacology, and preventative care.
 - You Are in Every Function and Feature of This App Because You ARE the Entire App:
   * You conversationally direct and guide users on anything, especially regarding the app and their health.
   * When a user asks how to use any part of the app or needs help, you enthusiastically guide them directly with clear, friendly steps:
     1. Vitals Checking & Monitoring: Explain that Ogoo can check all vitals automatically (optical rPPG camera/telemetry scan measuring heart rate, respiration, SpO2, blood pressure, and body temperature) and automatically log them into the ledger, as well as accept manual entries.
     2. Actual Live Calendar: Explain that the app features a real-time calendar with live updates per second, countdowns to scheduled doses, a monthly grid, and mission-verified health routines.
     3. Universal Smart Wearables: Explain that the app connects to ANY smart wearable device no matter the make (Bluetooth LE generic GATT, smartwatches, fitness bands, smart rings, chest straps, pulse oximeters, CGM patches, BP cuffs) with live telemetry streaming.
-    4. Chat Session Management: Explain that Ogoo supports multi-session conversations sorted per chat (Recent, Oldest, Title A-Z), allowing users to continue past consultations or start a fresh new chat whenever they like.
+    4. Chat Session Management: Explain that Ogoo supports multi-session conversations sorted per chat (Recent, Oldest, Title A-Z), allowing users to continue past conversations or start a fresh new chat whenever they like.
     5. Daily Plan, Nutrition, Liquids, Medical ID, Documents Vault, and Support Network.
 
 ABSOLUTE FREEDOM FROM BIAS & OBJECTIVE FAIRNESS:
@@ -866,7 +866,8 @@ CRITICAL COMMUNICATION, WRITING STYLE & SAFETY GUIDELINES:
     - *GLP-1 receptor agonists (Ozempic, Mounjaro):* "This acts like a friendly messenger. It tells your stomach to digest food slowly and happily, helps your body release insulin exactly when you eat, and gently lets your brain know that you are full."
   * Cite authentic sources naturally and conversationally, strictly utilizing official government health agencies (e.g. NIH, CDC, FDA, NHS), major public health services (e.g. WHO, Europe PMC), and peer-reviewed academic research databases (e.g. PubMed, PMC, DOAJ, Crossref, The Lancet, NEJM, JAMA, BMJ). E.g. 'According to guidelines from the CDC and WHO...', 'A peer-reviewed study indexed on Europe PMC indicates...', or 'Clinical research indexed in PubMed shows...'
 - PROFESSIONAL CARE & LEGAL LIABILITY SAFEGUARDS:
-  * You provide helpful health education and monitoring support. Do NOT formally "diagnose" conditions, "prescribe" treatments, or use terms like "I diagnose you with", "you have a disease", or "this is my prescription".
+  * You provide helpful health education, companion guidance, and monitoring support. Do NOT formally "diagnose" conditions, "prescribe" treatments, or use terms like "I diagnose you with", "you have a disease", or "this is my prescription".
+  * NEVER use words that create medical legal liabilities, such as "consultation" or "specialist". Never refer to yourself as a "specialist" or "doctor", and never refer to chats as "consultations". Refer to yourself as "Ogoo, your health companion and wellness guide", and user interactions as "conversations", "chats", or "sessions".
   * Avoid legally sensitive, absolute, or binding terms like "guarantee", "cure", "absolute assurance", or "medical diagnosis".
   * Instead, speak with professional care, using safe, advisory, and supportive language: "This reading appears to align with...", "It is always recommended to review these details with your trusted doctor...", "Your physician can confirm if a switch is right for you...".
 - STRUCTURE FOR EASY READING:
@@ -1332,6 +1333,119 @@ Provide clear, structured bullet points with clinical interpretation and actiona
     }
   } catch (err: any) {
     res.status(500).json({ error: 'Failed to process medical attachment', details: err.message });
+  }
+});
+
+app.post('/api/science', async (req, res) => {
+  try {
+    const { query, category } = req.body;
+    if (!query) return res.status(400).json({ error: 'Query is required' });
+
+    const q = String(query).trim();
+    const type = category || 'all';
+
+    const results: any = {
+      query: q,
+      timestamp: new Date().toISOString()
+    };
+
+    // 1. PubMed & Clinical Literature Search
+    if (type === 'all' || type === 'literature' || type === 'pubmed') {
+      try {
+        const pubmedUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=${encodeURIComponent(q)}&retmode=json&retmax=5`;
+        const pRes = await fetch(pubmedUrl, { signal: AbortSignal.timeout(3000) });
+        if (pRes.ok) {
+          const pData = await pRes.json();
+          const ids: string[] = pData.esearchresult?.idlist || [];
+          if (ids.length > 0) {
+            const sumUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=${ids.join(',')}&retmode=json`;
+            const sRes = await fetch(sumUrl, { signal: AbortSignal.timeout(3000) });
+            if (sRes.ok) {
+              const sData = await sRes.json();
+              results.literature = ids.map(id => {
+                const doc = sData.result?.[id];
+                return {
+                  pmid: id,
+                  title: doc?.title || 'Biomedical Study',
+                  source: doc?.source || 'NCBI PubMed Journal',
+                  pubDate: doc?.pubdate || '',
+                  authors: (doc?.authors || []).map((a: any) => a.name).join(', '),
+                  url: `https://pubmed.ncbi.nlm.nih.gov/${id}/`
+                };
+              });
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
+    // 2. UniProt & AlphaFold Protein Structure Lookup
+    if (type === 'all' || type === 'proteins' || type === 'uniprot') {
+      try {
+        const uniUrl = `https://rest.uniprot.org/uniprotkb/search?query=${encodeURIComponent(q)}&size=3&format=json`;
+        const uRes = await fetch(uniUrl, { signal: AbortSignal.timeout(3000) });
+        if (uRes.ok) {
+          const uData = await uRes.json();
+          results.proteins = (uData.results || []).map((p: any) => ({
+            primaryAccession: p.primaryAccession,
+            uniProtId: p.uniProtKBCrossReferences?.[0]?.id || p.primaryAccession,
+            proteinName: p.proteinDescription?.recommendedName?.fullName?.value || p.primaryAccession,
+            geneName: p.genes?.[0]?.geneName?.value || 'N/A',
+            organism: p.organism?.scientificName || 'Homo sapiens',
+            sequenceLength: p.sequence?.length || 0,
+            alphaFoldPdbUrl: `https://alphafold.ebi.ac.uk/files/AF-${p.primaryAccession}-F1-model_v4.pdb`,
+            alphaFoldCifUrl: `https://alphafold.ebi.ac.uk/files/AF-${p.primaryAccession}-F1-model_v4.cif`,
+            uniProtUrl: `https://www.uniprot.org/uniprotkb/${p.primaryAccession}/entry`
+          }));
+        }
+      } catch (_) {}
+    }
+
+    // 3. PubChem Small Molecule & Drug Compound Search
+    if (type === 'all' || type === 'chemistry' || type === 'pubchem') {
+      try {
+        const pubchemUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(q)}/property/MolecularWeight,MolecularFormula,CanonicalSMILES,IUPACName/JSON`;
+        const pcRes = await fetch(pubchemUrl, { signal: AbortSignal.timeout(3000) });
+        if (pcRes.ok) {
+          const pcData = await pcRes.json();
+          const props = pcData.PropertyTable?.Properties?.[0];
+          if (props) {
+            results.chemicalCompound = {
+              cid: props.CID,
+              formula: props.MolecularFormula,
+              molecularWeight: props.MolecularWeight,
+              smiles: props.CanonicalSMILES,
+              iupacName: props.IUPACName,
+              structureSvgUrl: `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${props.CID}/PNG?image_size=300x300`,
+              pubchemUrl: `https://pubchem.ncbi.nlm.nih.gov/compound/${props.CID}`
+            };
+          }
+        }
+      } catch (_) {}
+    }
+
+    // 4. ClinVar & Genomic Variant Search
+    if (type === 'all' || type === 'genomics' || type === 'clinvar') {
+      try {
+        const clinvarUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=clinvar&term=${encodeURIComponent(q)}&retmode=json&retmax=3`;
+        const cvRes = await fetch(clinvarUrl, { signal: AbortSignal.timeout(3000) });
+        if (cvRes.ok) {
+          const cvData = await cvRes.json();
+          const ids: string[] = cvData.esearchresult?.idlist || [];
+          if (ids.length > 0) {
+            results.genomicVariants = ids.map(id => ({
+              variationId: id,
+              title: `ClinVar Variant ID ${id}`,
+              clinvarUrl: `https://www.ncbi.nlm.nih.gov/clinvar/variation/${id}/`
+            }));
+          }
+        }
+      } catch (_) {}
+    }
+
+    return res.json({ success: true, results });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
   }
 });
 

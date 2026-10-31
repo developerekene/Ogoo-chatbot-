@@ -2,7 +2,7 @@
   "expo": {
     "name": "Ogoo",
     "slug": "ogoo-bot",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -12,7 +12,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "buildNumber": "6"
     },
     "android": {
       "adaptiveIcon": {
@@ -20,7 +21,8 @@
         "foregroundImage": "./assets/icon.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.devekene.ogoobot"
+      "package": "com.devekene.ogoobot",
+      "versionCode": 6
     },
     "web": {},
     "extra": {
