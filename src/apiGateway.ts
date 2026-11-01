@@ -103,7 +103,7 @@ function createUniversalResponse(data: any, status: number = 200): any {
 /**
  * Fallback autonomous intelligence generator for Ogoo
  */
-function generateAutonomousFallback(prompt: string, attachmentType?: string): any {
+export function generateAutonomousFallback(prompt: string, attachmentType?: string): any {
   const lower = (prompt || '').toLowerCase();
   let reply = `Hello! I am Ogoo, your dedicated clinical AI healthcare agent. I have reviewed your latest update. How can I assist you with your health vitals, daily plan, or symptom triage today?`;
   const toolActions: any[] = [];

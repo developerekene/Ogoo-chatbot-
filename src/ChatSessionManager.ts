@@ -16,13 +16,6 @@ export interface ChatAttachment {
   base64?: string;
 }
 
-export interface GroundingSource {
-  title: string;
-  uri: string;
-  snippet?: string;
-  sourceName?: string;
-}
-
 export interface ChatMessage {
   id: string;
   text: string;

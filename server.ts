@@ -4,6 +4,10 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 import { GoogleGenAI, Type } from '@google/genai';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const RENDER_BACKEND_URL = "https://keysafe-ntia.onrender.com";
 const APP_SECRET = process.env.VITE_CENTRAL_APP_SECRET || process.env.EXPO_PUBLIC_CENTRAL_APP_SECRET || "";
@@ -1449,44 +1453,41 @@ app.post('/api/science', async (req, res) => {
   }
 });
 
-const distDir = path.join(__dirname, 'dist');
-const distIndex = path.join(distDir, 'index.html');
+const PORT = 3000;
 
-if (!fs.existsSync(distIndex) && !process.env.EXPO_USE_METRO) {
-  try {
-    console.log('Dist bundle not found. Building web bundle via expo export...');
-    const { execSync } = require('child_process');
-    execSync('npx expo export -p web', { stdio: 'inherit' });
-  } catch (buildErr: any) {
-    console.warn('Failed to auto-build dist bundle:', buildErr?.message);
-  }
-}
-
-if (process.env.NODE_ENV === 'production' || !process.env.EXPO_USE_METRO || fs.existsSync(distIndex)) {
-  // Serve built static bundle
-  if (fs.existsSync(distIndex)) {
-    app.use(express.static(distDir));
-    app.use((req, res) => {
-      res.sendFile(distIndex);
+async function startServer() {
+  if (process.env.NODE_ENV !== 'production') {
+    const { createServer: createViteServer } = await import('vite');
+    const vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: 'custom',
+    });
+    app.use(vite.middlewares);
+    app.use('*any', async (req, res, next) => {
+      const url = req.originalUrl;
+      try {
+        let template = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
+        template = await vite.transformIndexHtml(url, template);
+        res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+      } catch (e) {
+        vite.ssrFixStacktrace(e as Error);
+        next(e);
+      }
     });
   } else {
-    // Fallback proxy to Expo dev server if running on 3001
-    app.use('/', createProxyMiddleware({
-      target: 'http://localhost:3001',
-      changeOrigin: true,
-      ws: true
-    }));
+    const distDir = path.join(__dirname, 'dist');
+    if (fs.existsSync(distDir)) {
+      app.use(express.static(distDir));
+      app.get('*any', (req, res) => {
+        res.sendFile(path.join(distDir, 'index.html'));
+      });
+    }
   }
-} else {
-  // In explicit metro dev mode, proxy to Expo dev server with dist fallback
-  app.use('/', createProxyMiddleware({
-    target: 'http://localhost:3001',
-    changeOrigin: true,
-    ws: true
-  }));
+
+  app.listen(PORT, () => {
+    console.log(`Server listening on http://0.0.0.0:${PORT}`);
+  });
 }
 
-const PORT = 3000;
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Express API server listening on 0.0.0.0:${PORT}`);
-});
+startServer();
+

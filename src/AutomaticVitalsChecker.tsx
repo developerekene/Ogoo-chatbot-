@@ -62,6 +62,7 @@ export const AutomaticVitalsChecker: React.FC<AutomaticVitalsCheckerProps> = ({
   const [liveBpSys, setLiveBpSys] = useState(120);
   const [liveBpDia, setLiveBpDia] = useState(78);
   const [liveTemp, setLiveTemp] = useState(98.6);
+  const [liveGlucose, setLiveGlucose] = useState(96);
   const [liveRespRate, setLiveRespRate] = useState(16);
   const [scanStepMessage, setScanStepMessage] = useState('Ready for optical scan');
   const [cameraActive, setCameraActive] = useState(false);
@@ -234,6 +235,32 @@ export const AutomaticVitalsChecker: React.FC<AutomaticVitalsCheckerProps> = ({
 
   return (
     <View style={styles.container}>
+      {/* Top Modal Header with Close Button */}
+      {onClose && (
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, paddingBottom: 8, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.1)' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Activity color="#E572A3" size={22} style={{ marginRight: 8 }} />
+            <Text style={{ color: '#FFF', fontSize: 18, fontWeight: '800' }}>Check Vitals (Automatic & Manual)</Text>
+          </View>
+          <TouchableOpacity
+            onPress={onClose}
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 18,
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 1,
+              borderColor: 'rgba(255, 255, 255, 0.2)'
+            }}
+            accessibilityLabel="Close"
+          >
+            <X color="#FFF" size={18} />
+          </TouchableOpacity>
+        </View>
+      )}
+
       {/* Ogoo Conversational Vitals Director */}
       <View style={styles.ogooDirectorCard}>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
@@ -241,10 +268,10 @@ export const AutomaticVitalsChecker: React.FC<AutomaticVitalsCheckerProps> = ({
           <Text style={styles.ogooDirectorTitle}>Ogoo's Clinical Vitals Guide</Text>
         </View>
         <Text style={styles.ogooDirectorBody}>
-          "I can **check all your vitals automatically** right now using camera photoplethysmography and connected sensors, or you can log your numbers manually. I immediately interpret your blood pressure, pulse, and oxygen with clinical precision!"
+          "I can **check all your vitals automatically** right now using camera photoplethysmography and connected sensors, or you can log your numbers manually. I immediately interpret your blood pressure, pulse, oxygen, and blood glucose with clinical precision!"
         </Text>
         <TouchableOpacity
-          onPress={() => onAskOgoo("Ogoo, analyze my latest vitals history and explain if my blood pressure and pulse readings are safe.")}
+          onPress={() => onAskOgoo("Ogoo, analyze my latest vitals history and explain if my blood pressure, pulse, and blood glucose readings are safe.")}
           style={styles.askOgooQuickBtn}
         >
           <MessageCircle color="#FFF" size={13} style={{ marginRight: 4 }} />
@@ -284,7 +311,7 @@ export const AutomaticVitalsChecker: React.FC<AutomaticVitalsCheckerProps> = ({
               </View>
               <Text style={styles.autoScanHeading}>Automated Multi-Vital Scan</Text>
               <Text style={styles.autoScanSubtext}>
-                Optical rPPG analyzes blood volume pulses in skin capillaries to determine Heart Rate, SpO2, and Blood Pressure automatically.
+                Optical rPPG analyzes blood volume pulses in skin capillaries to determine Heart Rate, SpO2, Blood Pressure, and Blood Glucose automatically.
               </Text>
             </View>
 
@@ -333,6 +360,11 @@ export const AutomaticVitalsChecker: React.FC<AutomaticVitalsCheckerProps> = ({
                 <Thermometer color="#4CAF50" size={16} />
                 <Text style={styles.previewLabel}>Temperature</Text>
                 <Text style={styles.previewValue}>{liveTemp}°F</Text>
+              </View>
+              <View style={styles.previewBox}>
+                <Droplet color="#fb923c" size={16} />
+                <Text style={styles.previewLabel}>Blood Glucose</Text>
+                <Text style={styles.previewValue}>{liveGlucose} <Text style={{ fontSize: 10 }}>mg/dL</Text></Text>
               </View>
             </View>
 

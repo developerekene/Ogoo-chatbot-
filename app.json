@@ -2,7 +2,7 @@
   "expo": {
     "name": "Ogoo",
     "slug": "ogoo-bot",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -13,7 +13,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "buildNumber": "6"
+      "buildNumber": "7"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,7 +22,7 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.devekene.ogoobot",
-      "versionCode": 6
+      "versionCode": 7
     },
     "web": {},
     "extra": {

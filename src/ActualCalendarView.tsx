@@ -21,7 +21,8 @@ import {
   Pill,
   Sparkles,
   Timer,
-  MessageCircle
+  MessageCircle,
+  X
 } from 'lucide-react-native';
 
 interface PlanTask {
@@ -295,6 +296,32 @@ export const ActualCalendarView: React.FC<ActualCalendarViewProps> = ({
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      {/* Top Modal Header with Close Button */}
+      {onClose && (
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, paddingBottom: 8, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.1)' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <CalendarIcon color="#E572A3" size={22} style={{ marginRight: 8 }} />
+            <Text style={{ color: '#FFF', fontSize: 18, fontWeight: '800' }}>Live Real-Time Calendar</Text>
+          </View>
+          <TouchableOpacity
+            onPress={onClose}
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 18,
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 1,
+              borderColor: 'rgba(255, 255, 255, 0.2)'
+            }}
+            accessibilityLabel="Close"
+          >
+            <X color="#FFF" size={18} />
+          </TouchableOpacity>
+        </View>
+      )}
+
       {/* Real-Time Live Clock Card (Updates per second) */}
       <View style={styles.liveClockCard}>
         <View style={styles.clockHeaderRow}>

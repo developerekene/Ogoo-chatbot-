@@ -1,11 +1,12 @@
 {
   "name": "ogoo-bot",
-  "version": "1.0.1",
+  "version": "1.1.0",
+  "type": "module",
   "main": "index.ts",
   "scripts": {
-    "start": "tsx server.ts",
+    "start": "NODE_ENV=production tsx server.ts",
     "dev": "tsx server.ts",
-    "build": "expo export -p web",
+    "build": "vite build",
     "lint": "tsc --noEmit",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -14,11 +15,13 @@
   "dependencies": {
     "@expo/metro-runtime": "~4.0.0",
     "@google/genai": "^2.10.0",
+    "buffer": "^6.0.3",
     "cors": "^2.8.6",
     "expo": "~54.0.33",
     "expo-status-bar": "~3.0.9",
     "express": "^5.2.1",
     "http-proxy-middleware": "^4.1.1",
+    "lucide-react": "^1.66.0",
     "lucide-react-native": "^0.577.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -31,13 +34,19 @@
     "tsx": "^4.23.12"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6",
     "@types/react": "~19.1.10",
     "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
     "babel-preset-expo": "~54.0.10",
     "concurrently": "^10.0.3",
-    "typescript": "~5.9.2"
+    "tailwindcss": "^4.3.3",
+    "typescript": "~5.9.2",
+    "vite": "^8.3.5",
+    "vite-plugin-react-native-web": "^3.2.0"
   },
   "private": true
 }

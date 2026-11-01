@@ -500,7 +500,41 @@ export const releaseScreenWakeLock = () => {
   }
 };
 
-export default function App() {
+class AppErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: any, errorInfo: any) {
+    console.error("AppErrorBoundary caught error:", error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#0f0020', justifyContent: 'center', alignItems: 'center', padding: 24 }}>
+          <View style={{ backgroundColor: '#1c0436', padding: 24, borderRadius: 20, borderWidth: 1.5, borderColor: '#a855f7', alignItems: 'center', maxWidth: 450, width: '100%' }}>
+            <Text style={{ fontSize: 22, fontWeight: '800', color: '#FFFFFF', marginBottom: 12 }}>Ogoo Universal Healthcare</Text>
+            <Text style={{ fontSize: 14, color: '#d8b4fe', textAlign: 'center', marginBottom: 20, lineHeight: 20 }}>
+              The application encountered a temporary display issue and was safely recovered.
+            </Text>
+            <TouchableOpacity
+              onPress={() => this.setState({ hasError: false })}
+              style={{ backgroundColor: '#5c1794', paddingHorizontal: 24, paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: '#d8b4fe' }}
+            >
+              <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 15 }}>Resume Application</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function MainApp() {
   const introMessage: ChatMessage = createDefaultIntroMessage();
 
   // Multi-session chat management (sorted per chat, continuing chats, starting new chats)
@@ -757,8 +791,12 @@ export default function App() {
     };
   }, [isFooterCollapsed]);
   
-  // Slice / temporary backend state
-  const [userInfo, setUserInfo] = useState<{ firstName?: string, lastName?: string, email?: string } | null>(null);
+  // Connected User Profile State
+  const [userInfo, setUserInfo] = useState<{ firstName?: string, lastName?: string, email?: string } | null>({
+    firstName: 'Senior',
+    lastName: 'Devekene',
+    email: 'seniordevekene@gmail.com'
+  });
   
   // Device ID & Location capture
   const deviceId = useRef(Platform.OS === 'web' ? (localStorage.getItem('ogoo_device_id') || (() => {
@@ -7077,6 +7115,7 @@ Please format concisely with three focused recommendations:
             backgroundColor: isActive ? 'rgba(92, 23, 148, 0.45)' : 'transparent',
             borderWidth: 1,
             borderColor: isActive ? 'rgba(216, 180, 254, 0.35)' : 'transparent',
+            zIndex: isMenuOpen ? 9999 : (isActive ? 10 : 1)
           }}
         >
           {isEditing ? (
@@ -7849,6 +7888,14 @@ Please format concisely with three focused recommendations:
       </KeyboardAvoidingView>
       </View>
     </View>
+  );
+}
+
+export default function App() {
+  return (
+    <AppErrorBoundary>
+      <MainApp />
+    </AppErrorBoundary>
   );
 }
 
