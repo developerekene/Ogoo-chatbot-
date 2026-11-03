@@ -742,10 +742,15 @@ Open the sidebar anytime using the sidebar toggle icon to browse all your sessio
 // --- API Route Handler ---
 app.post('/api/history', async (req, res) => {
   try {
-    const { deviceId } = req.body;
+    const { deviceId, clear } = req.body;
     if (!deviceId) return res.status(400).json({ error: 'deviceId is required' });
 
     const db = readDB();
+    if (clear) {
+      db.conversations[deviceId] = [];
+      writeDB(db);
+      return res.json({ success: true, messages: [], userInfo: db.users[deviceId] || null });
+    }
     const messages = db.conversations[deviceId] || [];
     const user = db.users[deviceId] || { deviceId, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
 

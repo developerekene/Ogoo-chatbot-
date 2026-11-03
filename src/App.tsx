@@ -663,6 +663,12 @@ function MainApp() {
       }
     }
     setChatActionMenuId(null);
+    // Sync clear payload to server memory so deleted history never resurrects on reload
+    fetchApi('/api/history', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ deviceId, clear: true })
+    }).catch(err => console.warn('Failed to clear server chat history:', err));
   };
 
   const handleSaveRenameChat = (sessionId: string) => {
@@ -694,6 +700,12 @@ function MainApp() {
     setActiveSessionId(freshSession.id);
     saveActiveChatId(freshSession.id);
     setChatActionMenuId(null);
+    // Sync clear payload to server memory so deleted history never resurrects on reload
+    fetchApi('/api/history', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ deviceId, clear: true })
+    }).catch(err => console.warn('Failed to clear server chat history:', err));
   };
   const [expandedSources, setExpandedSources] = useState<Record<string, boolean>>({});
   const [selectedAttachment, setSelectedAttachment] = useState<ChatAttachment | null>(null);
@@ -844,7 +856,12 @@ function MainApp() {
         });
         if (response.ok) {
           const data = await response.json();
-          if (data.messages && data.messages.length > 0) {
+          if (data.userInfo) {
+            setUserInfo(data.userInfo);
+          }
+          const storedSessions = loadStoredChatSessions();
+          const hasUserActivity = storedSessions.some(s => s.messages && s.messages.some(m => m.fromUser));
+          if (!hasUserActivity && data.messages && data.messages.length > 0) {
             const mapped = data.messages.map((m: any, idx: number) => {
               const text = m.parts?.[0]?.text || '';
               return {
@@ -855,9 +872,6 @@ function MainApp() {
               };
             });
             setMessages(mapped);
-          }
-          if (data.userInfo) {
-            setUserInfo(data.userInfo);
           }
         }
       } catch (err) {
@@ -3249,8 +3263,8 @@ Please format concisely with three focused recommendations:
       }
     };
 
-    const [activePlanTab, setActivePlanTab] = useState<'schedule' | 'timing' | 'prn' | 'chat_memory'>('schedule');
-    const [timingSubTab, setTimingSubTab] = useState<'interval' | 'specific_times' | 'weekly' | 'active_list'>('interval');
+    const [activePlanTab, setActivePlanTab] = useState<'schedule' | 'timing' | 'chat_memory'>('schedule');
+    const [timingSubTab, setTimingSubTab] = useState<'interval' | 'specific_times' | 'weekly' | 'prn' | 'active_list'>('interval');
     const [chatMemorySearch, setChatMemorySearch] = useState<string>('');
 
     const getDayNameFromTimestamp = (ts?: number) => {
@@ -3470,9 +3484,8 @@ Please format concisely with three focused recommendations:
             <View style={{ flexDirection: 'row', backgroundColor: '#200438', borderBottomWidth: 1, borderBottomColor: '#5c1794' }}>
               {[
                 { key: 'schedule', label: '📋 Daily Plan' },
-                { key: 'chat_memory', label: `💬 Chat Memory (${filteredDayMessages.length})` },
-                { key: 'timing', label: '⏱️ Timing' },
-                { key: 'prn', label: '🔒 PRN Safety' }
+                { key: 'timing', label: '⏱️ Protocols & Timing' },
+                { key: 'chat_memory', label: `💬 Consultation Notes (${filteredDayMessages.length})` }
               ].map(tab => (
                 <TouchableOpacity
                   key={tab.key}
@@ -3842,9 +3855,10 @@ Please format concisely with three focused recommendations:
                   {/* Protocol Selector Chips */}
                   <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 14 }}>
                     {[
-                      { key: 'interval', label: '⏱️ Interval-Based (2/4/6/8/10/12h)' },
-                      { key: 'specific_times', label: '🕒 Specific Daily Times' },
-                      { key: 'weekly', label: '📅 Weekly & Specific Days' },
+                      { key: 'interval', label: '⏱️ Interval-Based' },
+                      { key: 'specific_times', label: '🕒 Specific Times' },
+                      { key: 'weekly', label: '📅 Weekly Schedule' },
+                      { key: 'prn', label: '🔒 PRN Safety' },
                       { key: 'active_list', label: `📋 Active (${flexibleSchedules.length})` }
                     ].map(sub => (
                       <TouchableOpacity
@@ -4322,83 +4336,82 @@ Please format concisely with three focused recommendations:
                       ))}
                     </View>
                   )}
-                </View>
-              )}
 
-              {/* TAB 3: AS-NEEDED (PRN) & SAFETY LOCKS */}
-              {activePlanTab === 'prn' && (
-                <View>
-                  <View style={{ backgroundColor: '#2d0a4e', padding: 14, borderRadius: 14, marginBottom: 14, borderWidth: 1, borderColor: '#5c1794' }}>
-                    <Text style={{ color: COLORS.accent, fontWeight: 'bold', fontSize: 13, marginBottom: 6 }}>PRN Medication & Lockout Safety</Text>
-                    <Text style={{ color: COLORS.textSub, fontSize: 11, marginBottom: 10 }}>
-                      Enforces minimum intervals between as-needed doses to prevent accidental double-dosing.
-                    </Text>
-                    <TextInput
-                      style={[styles.input, { borderWidth: 1, borderColor: COLORS.borderSubtle, borderRadius: 8, paddingHorizontal: 10, height: 40, marginBottom: 8, color: '#FFF' }]}
-                      placeholder="Medication name (e.g. Oxycodone 5mg / Albuterol)"
-                      placeholderTextColor={COLORS.textSub}
-                      value={prnMedTitle}
-                      onChangeText={setPrnMedTitle}
-                    />
-                  </View>
-
-                  {/* Minimum Safety Lockout Interval Selector (2, 4, 6, 8, 12 hours) */}
-                  <Text style={{ color: '#FFF', fontSize: 12, fontWeight: '700', marginBottom: 6 }}>
-                    Minimum Safety Lockout Interval:
-                  </Text>
-                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
-                    {[2, 4, 6, 8, 12].map(hrs => (
-                      <TouchableOpacity
-                        key={hrs}
-                        onPress={() => setPrnMinIntervalHours(hrs)}
-                        style={{
-                          flex: 1,
-                          minWidth: '18%',
-                          paddingVertical: 8,
-                          borderRadius: 10,
-                          backgroundColor: prnMinIntervalHours === hrs ? '#5c1794' : 'rgba(255,255,255,0.05)',
-                          alignItems: 'center',
-                          borderWidth: 1,
-                          borderColor: prnMinIntervalHours === hrs ? COLORS.accent : COLORS.borderSubtle
-                        }}
-                      >
-                        <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 12 }}>{hrs} Hours</Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-
-                  {/* Live Lockout Countdown Status Card */}
-                  <View style={{ backgroundColor: prnStatus.locked ? 'rgba(255,75,75,0.12)' : 'rgba(0,200,100,0.12)', padding: 14, borderRadius: 14, marginBottom: 16, borderWidth: 1.5, borderColor: prnStatus.locked ? '#FF4B4B' : '#00C864' }}>
-                    <Text style={{ color: prnStatus.locked ? '#FF4B4B' : '#00C864', fontWeight: 'bold', fontSize: 14 }}>
-                      {prnStatus.locked ? '🛑 DOUBLE-DOSE LOCKOUT ACTIVE' : '✅ SAFE TO TAKE PRN DOSE'}
-                    </Text>
-
-                    {prnStatus.locked ? (
-                      <Text style={{ color: '#DDD', fontSize: 12, marginTop: 4 }}>
-                        Strict safety lock in effect: <Text style={{ color: '#FF4B4B', fontWeight: 'bold' }}>{prnStatus.timeStr} remaining</Text> before next safe dose.
-                      </Text>
-                    ) : (
-                      <View style={{ marginTop: 6 }}>
-                        <Text style={{ color: '#DDD', fontSize: 12 }}>
-                          Minimum {prnMinIntervalHours}-hour safety interval has elapsed.
+                  {/* 5. PRN LOCKOUT SAFETY PROTOCOLS */}
+                  {timingSubTab === 'prn' && (
+                    <View>
+                      <View style={{ backgroundColor: '#2d0a4e', padding: 14, borderRadius: 14, marginBottom: 14, borderWidth: 1, borderColor: '#5c1794' }}>
+                        <Text style={{ color: COLORS.accent, fontWeight: 'bold', fontSize: 13, marginBottom: 6 }}>PRN Medication & Lockout Safety</Text>
+                        <Text style={{ color: COLORS.textSub, fontSize: 11, marginBottom: 10 }}>
+                          Enforces minimum intervals between as-needed doses to prevent accidental double-dosing.
                         </Text>
-                        <TouchableOpacity
-                          onPress={logPrnDoseNow}
-                          style={{ backgroundColor: '#00C864', paddingVertical: 10, borderRadius: 10, alignItems: 'center', marginTop: 10 }}
-                        >
-                          <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 12 }}>⚡ Log PRN Dose Now & Start Lockout Timer</Text>
-                        </TouchableOpacity>
+                        <TextInput
+                          style={[styles.input, { borderWidth: 1, borderColor: COLORS.borderSubtle, borderRadius: 8, paddingHorizontal: 10, height: 40, marginBottom: 8, color: '#FFF' }]}
+                          placeholder="Medication name (e.g. Oxycodone 5mg / Albuterol)"
+                          placeholderTextColor={COLORS.textSub}
+                          value={prnMedTitle}
+                          onChangeText={setPrnMedTitle}
+                        />
                       </View>
-                    )}
-                  </View>
 
-                  {/* Last Dose Record */}
-                  <View style={{ backgroundColor: 'rgba(255,255,255,0.03)', padding: 12, borderRadius: 12, borderWidth: 1, borderColor: COLORS.borderSubtle }}>
-                    <Text style={{ color: COLORS.textSub, fontSize: 11 }}>Last Recorded PRN Dose:</Text>
-                    <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 13, marginTop: 2 }}>
-                      {prnLastDoseTime ? new Date(prnLastDoseTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' (' + new Date(prnLastDoseTime).toLocaleDateString() + ')' : 'No prior dose recorded'}
-                    </Text>
-                  </View>
+                      {/* Minimum Safety Lockout Interval Selector (2, 4, 6, 8, 12 hours) */}
+                      <Text style={{ color: '#FFF', fontSize: 12, fontWeight: '700', marginBottom: 6 }}>
+                        Minimum Safety Lockout Interval:
+                      </Text>
+                      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
+                        {[2, 4, 6, 8, 12].map(hrs => (
+                          <TouchableOpacity
+                            key={hrs}
+                            onPress={() => setPrnMinIntervalHours(hrs)}
+                            style={{
+                              flex: 1,
+                              minWidth: '18%',
+                              paddingVertical: 8,
+                              borderRadius: 10,
+                              backgroundColor: prnMinIntervalHours === hrs ? '#5c1794' : 'rgba(255,255,255,0.05)',
+                              alignItems: 'center',
+                              borderWidth: 1,
+                              borderColor: prnMinIntervalHours === hrs ? COLORS.accent : COLORS.borderSubtle
+                            }}
+                          >
+                            <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 12 }}>{hrs} Hours</Text>
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+
+                      {/* Live Lockout Countdown Status Card */}
+                      <View style={{ backgroundColor: prnStatus.locked ? 'rgba(255,75,75,0.12)' : 'rgba(0,200,100,0.12)', padding: 14, borderRadius: 14, marginBottom: 16, borderWidth: 1.5, borderColor: prnStatus.locked ? '#FF4B4B' : '#00C864' }}>
+                        <Text style={{ color: prnStatus.locked ? '#FF4B4B' : '#00C864', fontWeight: 'bold', fontSize: 14 }}>
+                          {prnStatus.locked ? '🛑 DOUBLE-DOSE LOCKOUT ACTIVE' : '✅ SAFE TO TAKE PRN DOSE'}
+                        </Text>
+
+                        {prnStatus.locked ? (
+                          <Text style={{ color: '#DDD', fontSize: 12, marginTop: 4 }}>
+                            Strict safety lock in effect: <Text style={{ color: '#FF4B4B', fontWeight: 'bold' }}>{prnStatus.timeStr} remaining</Text> before next safe dose.
+                          </Text>
+                        ) : (
+                          <View style={{ marginTop: 6 }}>
+                            <Text style={{ color: '#DDD', fontSize: 12 }}>
+                              Minimum {prnMinIntervalHours}-hour safety interval has elapsed.
+                            </Text>
+                            <TouchableOpacity
+                              onPress={logPrnDoseNow}
+                              style={{ backgroundColor: '#00C864', paddingVertical: 10, borderRadius: 10, alignItems: 'center', marginTop: 10 }}
+                            >
+                              <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 12 }}>⚡ Log PRN Dose Now & Start Lockout Timer</Text>
+                            </TouchableOpacity>
+                          </View>
+                        )}
+                      </View>
+
+                      <View style={{ backgroundColor: 'rgba(255,255,255,0.03)', padding: 12, borderRadius: 12, borderWidth: 1, borderColor: COLORS.borderSubtle }}>
+                        <Text style={{ color: COLORS.textSub, fontSize: 11 }}>Last Recorded PRN Dose:</Text>
+                        <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 13, marginTop: 2 }}>
+                          {prnLastDoseTime ? new Date(prnLastDoseTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' (' + new Date(prnLastDoseTime).toLocaleDateString() + ')' : 'No prior dose recorded'}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
                 </View>
               )}
             </ScrollView>
